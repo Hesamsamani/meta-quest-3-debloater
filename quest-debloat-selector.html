@@ -4,98 +4,599 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Meta Quest 3 Debloat & Privacy Selector</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
   <style>
+    /* Layer 1: Primitive Design Tokens */
     :root {
-      --bg: #0b0f17; --surface: #131a26; --hover: #1a2436; --border: #263248;
-      --text: #f1f5f9; --muted: #94a3b8; --blue: #3b82f6; --green: #10b981;
-      --amber: #f59e0b; --orange: #f97316; --red: #ef4444;
+      --p-oled-950: #070a12;
+      --p-slate-900: #0f1624;
+      --p-slate-850: #131c2e;
+      --p-slate-800: #162033;
+      --p-slate-750: #1e2d45;
+      --p-slate-650: #334b6e;
+      --p-slate-400: #94a3b8;
+      --p-slate-300: #cbd5e1;
+      --p-slate-50: #f8fafc;
+      --p-cyan-400: #38bdf8;
+      --p-blue-500: #3b82f6;
+      --p-green-500: #10b981;
+      --p-amber-500: #f59e0b;
+      --p-orange-500: #f97316;
+      --p-red-500: #ef4444;
+      --p-purple-500: #a855f7;
+
+      /* Layer 2: Semantic Tokens */
+      --bg-canvas: var(--p-oled-950);
+      --bg-surface: var(--p-slate-900);
+      --bg-elevated: var(--p-slate-800);
+      --bg-input: #0b101b;
+      --border-subtle: var(--p-slate-750);
+      --border-highlight: var(--p-slate-650);
+      --text-primary: var(--p-slate-50);
+      --text-secondary: var(--p-slate-300);
+      --text-muted: var(--p-slate-400);
+      --accent-cyan: var(--p-cyan-400);
+      --accent-blue: var(--p-blue-500);
+      --accent-safe: var(--p-green-500);
+      --accent-moderate: var(--p-amber-500);
+      --accent-caution: var(--p-orange-500);
+      --accent-danger: var(--p-red-500);
+      --accent-purple: var(--p-purple-500);
+
+      /* Layer 3: Component Tokens */
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 14px;
+      --font-sans: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', ui-monospace, Consolas, monospace;
+      --transition: 180ms cubic-bezier(0.16, 1, 0.3, 1);
     }
+
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); padding: 28px; max-width: 1280px; margin: 0 auto; }
-    header { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px 24px; margin-bottom: 18px; }
-    h1 { font-size: 22px; margin-bottom: 6px; }
-    .sub { color: var(--muted); font-size: 14px; }
-    .toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 16px; }
-    button { background: var(--hover); color: var(--text); border: 1px solid var(--border); padding: 8px 14px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 13px; }
-    button:hover { border-color: var(--blue); }
-    button.safe { background: var(--green); color: #051b11; border-color: var(--green); }
-    button.tel { background: var(--blue); border-color: var(--blue); }
-    button.pcvr { background: var(--amber); color: #1c1102; border-color: var(--amber); }
-    input[type=text] { background: var(--surface); color: var(--text); border: 1px solid var(--border); padding: 8px 12px; border-radius: 8px; min-width: 240px; }
-    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 12px; margin-bottom: 24px; }
-    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px; display: flex; gap: 12px; align-items: flex-start; }
-    .card.locked { opacity: .65; border-color: rgba(239,68,68,.4); }
-    .badge { font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 999px; margin-left: 6px; }
-    .SAFE { background: rgba(16,185,129,.18); color: var(--green); }
-    .MODERATE { background: rgba(245,158,11,.18); color: var(--amber); }
-    .CAUTION { background: rgba(249,115,22,.18); color: var(--orange); }
-    .PROTECTED { background: rgba(239,68,68,.18); color: var(--red); }
-    .pkg { font-family: ui-monospace, Consolas, monospace; font-size: 12px; color: var(--blue); margin: 3px 0; word-break: break-all; }
-    .desc { font-size: 12.5px; color: var(--muted); }
-    .out { background: #090d14; border: 1px solid var(--border); border-radius: 10px; padding: 16px; }
-    pre { font-family: ui-monospace, Consolas, monospace; font-size: 12.5px; white-space: pre-wrap; color: #cbd5e1; max-height: 280px; overflow: auto; margin-top: 10px; }
+    html { color-scheme: dark; }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg-canvas);
+      background-image:
+        radial-gradient(900px 420px at 8% -5%, rgba(56, 189, 248, 0.10), transparent 60%),
+        radial-gradient(760px 360px at 92% 0%, rgba(16, 185, 129, 0.08), transparent 55%),
+        radial-gradient(700px 420px at 55% 100%, rgba(168, 85, 247, 0.06), transparent 60%),
+        linear-gradient(rgba(30, 45, 69, 0.22) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(30, 45, 69, 0.22) 1px, transparent 1px);
+      background-size: auto, auto, auto, 42px 42px, 42px 42px;
+      color: var(--text-primary);
+      line-height: 1.5;
+      padding: 24px 24px 40px;
+      min-height: 100dvh;
+    }
+
+    .container { max-width: 1360px; margin: 0 auto; }
+
+    :focus-visible {
+      outline: 2px solid var(--accent-cyan);
+      outline-offset: 2px;
+    }
+
+    /* Header Bar */
+    .hero {
+      background: linear-gradient(180deg, rgba(22, 32, 51, 0.92), rgba(15, 22, 36, 0.96));
+      border: 1px solid var(--border-subtle);
+      border-top: 3px solid var(--accent-cyan);
+      border-radius: var(--radius-lg);
+      padding: 20px 24px;
+      margin-bottom: 16px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+    .hero-brand { display: flex; align-items: center; gap: 14px; }
+    .hero-icon {
+      width: 44px; height: 44px; border-radius: 10px;
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      display: grid; place-items: center; color: var(--accent-cyan); flex-shrink: 0;
+    }
+    h1 { font-size: 20px; font-weight: 700; letter-spacing: -0.015em; }
+    .sub { color: var(--text-muted); font-size: 13.5px; margin-top: 2px; }
+    .sub code {
+      font-family: var(--font-mono); font-size: 12px; color: var(--accent-cyan);
+      background: rgba(56, 189, 248, 0.1); padding: 1px 6px; border-radius: 4px;
+    }
+    .guard-pill {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 12px; border-radius: 999px;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.38);
+      color: var(--accent-safe); font-size: 12px; font-weight: 600;
+      letter-spacing: 0.02em; white-space: nowrap;
+    }
+    .dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+
+    /* Bento KPI Grid */
+    .bento {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .kpi {
+      background: linear-gradient(180deg, rgba(19, 28, 46, 0.95), rgba(11, 17, 30, 0.98));
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      position: relative;
+      overflow: hidden;
+      font-variant-numeric: tabular-nums;
+    }
+    .kpi::before {
+      content: ""; position: absolute; inset: 0 0 auto 0; height: 3px;
+      background: var(--kpi-accent, var(--accent-cyan));
+    }
+    .kpi-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 6px; }
+    .kpi-label { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; color: var(--text-muted); text-transform: uppercase; }
+    .kpi-tag {
+      font-size: 10.5px; font-weight: 700; padding: 2px 7px; border-radius: 5px;
+      color: var(--kpi-accent, var(--accent-cyan));
+      background: color-mix(in srgb, var(--kpi-accent, var(--accent-cyan)) 15%, transparent);
+      border: 1px solid color-mix(in srgb, var(--kpi-accent, var(--accent-cyan)) 35%, transparent);
+    }
+    .kpi-val { font-size: 22px; font-weight: 700; line-height: 1.2; margin-bottom: 4px; }
+    .kpi-sub { font-family: var(--font-mono); font-size: 11.5px; color: var(--text-secondary); }
+    .kpi-track { margin-top: 10px; height: 5px; background: #1a273e; border-radius: 999px; overflow: hidden; }
+    .kpi-fill { height: 100%; background: var(--kpi-accent, var(--accent-safe)); border-radius: 999px; transition: width var(--transition); }
+
+    /* Controls & Category Filters */
+    .controls {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 14px 16px;
+      margin-bottom: 16px;
+      display: flex; flex-direction: column; gap: 12px;
+    }
+    .toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+    .toolbar-label { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; color: var(--text-muted); text-transform: uppercase; margin-right: 4px; }
+
+    button {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--bg-elevated); color: var(--text-primary);
+      border: 1px solid var(--border-highlight);
+      padding: 8px 14px; border-radius: var(--radius-sm);
+      cursor: pointer; font-family: inherit; font-weight: 600; font-size: 13px;
+      transition: background var(--transition), border-color var(--transition), transform var(--transition);
+    }
+    button:hover { border-color: var(--accent-cyan); background: #1d2b44; }
+    button:active { transform: translateY(1px); }
+    button.safe { background: var(--accent-safe); color: #041810; border-color: var(--accent-safe); }
+    button.safe:hover { background: #34d399; border-color: #34d399; }
+    button.tel { background: var(--accent-blue); color: #ffffff; border-color: var(--accent-blue); }
+    button.tel:hover { background: #60a5fa; border-color: #60a5fa; }
+    button.pcvr { background: var(--accent-moderate); color: #180e02; border-color: var(--accent-moderate); }
+    button.pcvr:hover { background: #fbbf24; border-color: #fbbf24; }
+    button.copied { background: var(--accent-safe); color: #041810; border-color: var(--accent-safe); }
+
+    .search-box {
+      position: relative; flex: 1 1 260px; max-width: 380px; margin-left: auto;
+    }
+    .search-box svg {
+      position: absolute; left: 11px; top: 50%; transform: translateY(-50%);
+      color: var(--text-muted); pointer-events: none;
+    }
+    .search-box input {
+      width: 100%; background: var(--bg-input); color: var(--text-primary);
+      border: 1px solid var(--border-highlight);
+      padding: 8px 32px 8px 34px; border-radius: var(--radius-sm);
+      font-family: inherit; font-size: 13px;
+      transition: border-color var(--transition);
+    }
+    .search-box input:focus { outline: none; border-color: var(--accent-cyan); }
+    .search-clear {
+      position: absolute; right: 6px; top: 50%; transform: translateY(-50%);
+      background: transparent; border: none; color: var(--text-muted);
+      padding: 2px 6px; font-size: 15px; display: none;
+    }
+    .search-clear:hover { color: var(--text-primary); background: transparent; border-color: transparent; }
+
+    .cat-row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+    .cat-pill {
+      padding: 6px 11px; font-size: 12px; font-weight: 600; border-radius: var(--radius-sm);
+      background: var(--bg-input); color: var(--text-secondary); border: 1px solid var(--border-subtle);
+      font-variant-numeric: tabular-nums;
+    }
+    .cat-pill.active {
+      background: var(--bg-elevated); color: var(--text-primary);
+      border-color: var(--accent-blue); box-shadow: inset 0 -2px 0 var(--accent-cyan);
+    }
+    .sel-toggle { margin-left: auto; }
+
+    /* Package Grid */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(365px, 1fr));
+      gap: 12px;
+      margin-bottom: 22px;
+    }
+    .card {
+      background: linear-gradient(180deg, rgba(18, 26, 42, 0.94), rgba(13, 19, 32, 0.98));
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 14px 15px;
+      display: flex; gap: 12px; align-items: flex-start;
+      transition: border-color var(--transition), background var(--transition), transform var(--transition);
+      cursor: pointer;
+    }
+    .card:hover { border-color: var(--border-highlight); background: #141e31; }
+    .card.is-selected { border-color: rgba(59, 130, 246, 0.55); background: rgba(20, 34, 58, 0.85); }
+    .card.locked { opacity: 0.72; border-color: rgba(239, 68, 68, 0.35); cursor: not-allowed; }
+    .card-check { padding-top: 2px; flex-shrink: 0; }
+    .card-check input[type=checkbox] {
+      width: 17px; height: 17px; accent-color: var(--accent-blue); cursor: pointer;
+    }
+    .lock-icon {
+      width: 18px; height: 18px; border-radius: 5px;
+      background: rgba(239, 68, 68, 0.16); border: 1px solid rgba(239, 68, 68, 0.45);
+      color: var(--accent-danger); display: grid; place-items: center;
+    }
+    .card-body { min-width: 0; flex: 1; }
+    .card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+    .card-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+    .badge {
+      font-size: 10.5px; font-weight: 700; padding: 2px 8px; border-radius: 6px;
+      letter-spacing: 0.03em; flex-shrink: 0;
+    }
+    .SAFE { background: rgba(16, 185, 129, 0.15); color: var(--accent-safe); border: 1px solid rgba(16, 185, 129, 0.38); }
+    .MODERATE { background: rgba(245, 158, 11, 0.15); color: var(--accent-moderate); border: 1px solid rgba(245, 158, 11, 0.38); }
+    .CAUTION { background: rgba(249, 115, 22, 0.15); color: var(--accent-caution); border: 1px solid rgba(249, 115, 22, 0.38); }
+    .PROTECTED { background: rgba(239, 68, 68, 0.15); color: var(--accent-danger); border: 1px solid rgba(239, 68, 68, 0.38); }
+
+    .pkg {
+      font-family: var(--font-mono); font-size: 11.5px; color: #93c5fd;
+      margin: 4px 0 6px; word-break: break-all;
+    }
+    .affects-chip {
+      display: inline-block; font-size: 11.5px; font-weight: 500;
+      color: var(--accent-cyan); background: rgba(56, 189, 248, 0.08);
+      border: 1px solid rgba(56, 189, 248, 0.22); border-radius: 5px;
+      padding: 2px 8px; margin-bottom: 6px;
+    }
+    .desc { font-size: 12.5px; color: var(--text-muted); line-height: 1.45; }
+    .empty-state {
+      grid-column: 1 / -1; text-align: center; padding: 40px 20px;
+      background: var(--bg-surface); border: 1px dashed var(--border-highlight);
+      border-radius: var(--radius-md); color: var(--text-muted);
+    }
+
+    /* ADB Output Console */
+    .console {
+      background: #080b12;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+    .console-bar {
+      background: var(--bg-elevated);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 10px 16px;
+      display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between;
+    }
+    .console-left { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+    .console-title {
+      font-size: 12px; font-weight: 700; letter-spacing: 0.05em; color: var(--text-secondary);
+      text-transform: uppercase; display: inline-flex; align-items: center; gap: 8px; margin-right: 6px;
+    }
+    .console-tabs { display: flex; gap: 4px; flex-wrap: wrap; }
+    .console-tab { padding: 5px 10px; font-size: 12px; background: var(--bg-input); border-color: var(--border-subtle); }
+    .console-tab.active { background: var(--accent-blue); border-color: var(--accent-blue); color: #fff; }
+    .console-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    pre {
+      font-family: var(--font-mono); font-size: 12px; white-space: pre-wrap;
+      color: var(--text-secondary); max-height: 300px; overflow: auto;
+      padding: 14px 16px; line-height: 1.55;
+    }
+
+    @media (max-width: 1024px) {
+      .bento { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 640px) {
+      body { padding: 14px 14px 28px; }
+      .bento { grid-template-columns: 1fr; }
+      .grid { grid-template-columns: 1fr; }
+      .search-box { max-width: none; margin-left: 0; }
+      .sel-toggle { margin-left: 0; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition: none !important; }
+    }
   </style>
 </head>
 <body>
-  <header>
-    <h1>Meta Quest 3 Debloat & Privacy Selector</h1>
-    <div class="sub">Select telemetry, social apps, and Horizon OS bloatware to disable reversibly via ADB (<code>pm disable-user --user 0</code>). Protected OS packages are hard-locked.</div>
-  </header>
-  <div class="toolbar">
-    <button class="safe" onclick="selectPreset('safe')">Safe Recommended</button>
-    <button class="tel" onclick="selectPreset('telemetry')">Telemetry & Ads Only</button>
-    <button class="pcvr" onclick="selectPreset('pcvr')">PCVR / Minimalist</button>
-    <button onclick="selectPreset('none')">Clear Selection</button>
-    <input id="q" type="text" placeholder="Search package or description..." oninput="render()" />
-    <span id="count" class="sub"></span>
+  <div class="container">
+    <header class="hero">
+      <div class="hero-brand">
+        <div class="hero-icon" aria-hidden="true">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="7" width="20" height="10" rx="3" />
+            <path d="M8 17c1.2-2.2 2.5-3 4-3s2.8.8 4 3" />
+            <circle cx="8" cy="12" r="1.2" />
+            <circle cx="16" cy="12" r="1.2" />
+          </svg>
+        </div>
+        <div>
+          <h1>Meta Quest 3 Debloat &amp; Privacy Selector</h1>
+          <div class="sub">Generate reversible ADB scripts (<code>pm disable-user --user 0</code>). Protected OS, tracking, and OpenXR drivers stay hard-locked.</div>
+        </div>
+      </div>
+      <div class="guard-pill"><span class="dot"></span>ZERO ROOT • ZERO UNINSTALLS • HOME GUARDED</div>
+    </header>
+
+    <section class="bento" aria-label="Catalog and Debloat Metrics">
+      <div class="kpi" style="--kpi-accent: var(--accent-cyan);">
+        <div class="kpi-top"><span class="kpi-label">Curated Catalog</span><span class="kpi-tag">HORIZON OS v209+</span></div>
+        <div class="kpi-val" id="kpi-total">100 Packages</div>
+        <div class="kpi-sub">50 SAFE • 15 MOD • 11 CAU • 24 LOCK</div>
+      </div>
+      <div class="kpi" style="--kpi-accent: var(--accent-safe);">
+        <div class="kpi-top"><span class="kpi-label">Queued Selection</span><span class="kpi-tag" id="kpi-tier-tag">SAFE PRESET</span></div>
+        <div class="kpi-val" id="kpi-selected">50 queued</div>
+        <div class="kpi-sub" id="kpi-breakdown">50 SAFE • 0 MOD • 0 CAU</div>
+        <div class="kpi-track"><div class="kpi-fill" id="kpi-progress" style="width: 65%"></div></div>
+      </div>
+      <div class="kpi" style="--kpi-accent: var(--accent-purple);">
+        <div class="kpi-top"><span class="kpi-label">Verified RAM Relieved</span><span class="kpi-tag">LIVE QUEST 3</span></div>
+        <div class="kpi-val">~1.0 GB+</div>
+        <div class="kpi-sub">+822 MB net / +855 MB kill delta</div>
+      </div>
+      <div class="kpi" style="--kpi-accent: var(--accent-moderate);">
+        <div class="kpi-top"><span class="kpi-label">APK Storage Footprint</span><span class="kpi-tag">/data/app</span></div>
+        <div class="kpi-val">2.51 GiB</div>
+        <div class="kpi-sub">Reclaimable only if pm uninstalled</div>
+      </div>
+    </section>
+
+    <section class="controls" aria-label="Filter and Preset Controls">
+      <div class="toolbar">
+        <span class="toolbar-label">Presets</span>
+        <button class="safe" onclick="selectPreset('safe')">Safe Recommended (50)</button>
+        <button class="tel" onclick="selectPreset('telemetry')">Telemetry &amp; Ads (21)</button>
+        <button class="pcvr" onclick="selectPreset('pcvr')">PCVR / Minimalist (65)</button>
+        <button onclick="selectPreset('none')">Clear Selection</button>
+        <div class="search-box">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          <input id="q" type="text" placeholder="Filter package ID, feature, or subsystem..." oninput="onSearchInput()" />
+          <button id="clearSearch" class="search-clear" title="Clear search" onclick="clearSearch()">×</button>
+        </div>
+      </div>
+      <div id="catRow" class="cat-row"></div>
+    </section>
+
+    <main id="grid" class="grid"></main>
+
+    <section class="console" aria-label="Generated Script Output">
+      <div class="console-bar">
+        <div class="console-left">
+          <span class="console-title"><span class="dot" style="color: var(--accent-safe);"></span>ADB Script Console</span>
+          <div class="console-tabs">
+            <button id="tab-disable" class="console-tab active" onclick="setScriptMode('disable')">Disable (ADB)</button>
+            <button id="tab-restore" class="console-tab" onclick="setScriptMode('restore')">Restore / Undo (ADB)</button>
+            <button id="tab-ps1" class="console-tab" onclick="setScriptMode('ps1')">PowerShell Loop</button>
+          </div>
+        </div>
+        <div class="console-actions">
+          <span id="count" class="sub" style="font-family: var(--font-mono); margin-right: 4px;"></span>
+          <button id="copyBtn" onclick="copyScript()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="9" y="9" width="13" height="13" rx="2" /><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+            </svg>
+            <span id="copyLabel">Copy Script</span>
+          </button>
+          <button onclick="downloadScript()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" />
+            </svg>
+            <span>Download File</span>
+          </button>
+        </div>
+      </div>
+      <pre id="script"></pre>
+    </section>
   </div>
-  <div id="grid" class="grid"></div>
-  <div class="out">
-    <div class="toolbar" style="margin-bottom:4px">
-      <strong>Generated ADB Commands</strong>
-      <button onclick="copyScript('disable')">Copy Disable Script</button>
-      <button onclick="copyScript('restore')">Copy Undo / Restore Script</button>
-    </div>
-    <pre id="script"></pre>
-  </div>
+
   <script>
     const PACKAGES = [{"package": "com.meta.horizonadidservice", "name": "Meta Horizon Ad ID Service", "category": "Telemetry & Ads", "affects": "Ad Tracking & Personalized Ad ID", "tier": "SAFE", "presets": ["telemetry", "safe", "pcvr"], "description": "Meta Horizon advertising identifier tracking and ad attribution service."}, {"package": "com.meta.federatedcomputing.oculus", "name": "Meta Federated Computing", "category": "Telemetry & Ads", "affects": "Background ML Telemetry & CPU", "tier": "SAFE", "presets": ["telemetry", "safe", "pcvr"], "description": "Background federated machine learning and telemetry model training."}, {"package": "com.android.adservices.api", "name": "Android AdServices API", "category": "Telemetry & Ads", "affects": "Android Privacy Sandbox Ad API", "tier": "SAFE", "presets": ["telemetry", "safe", "pcvr"], "description": "Android Privacy Sandbox ad targeting and attribution API."}, {"package": "com.android.ext.adservices.api", "name": "Android Extended AdServices", "category": "Telemetry & Ads", "affects": "Extended Ad Attribution Background Service", "tier": "SAFE", "presets": ["telemetry", "safe", "pcvr"], "description": "Extended Android Privacy Sandbox advertising background service."}, {"package": "com.android.ondevicepersonalization.services", "name": "On-Device Ad Personalization", "category": "Telemetry & Ads", "affects": "On-Device Behavioral Ad Profiling", "tier": "SAFE", "presets": ["telemetry", "safe", "pcvr"], "description": "On-device behavioral ad personalization engine."}, {"package": "com.android.federatedcompute.services", "name": "Android Federated Compute", "category": "Telemetry & Ads", "affects": "Android Federated ML Telemetry & CPU", "tier": "SAFE", "presets": ["telemetry", "safe", "pcvr"], "description": "Background Android federated telemetry training daemon."}, {"package": "com.oculus.bugreportuploader", "name": "Oculus Bug Report Uploader", "category": "Telemetry & Ads", "affects": "Crash / Diagnostic Uploader & Network", "tier": "SAFE", "presets": ["telemetry", "safe", "pcvr"], "description": "Background diagnostic dump and crash log uploader to Meta servers."}, {"package": "com.oculus.bugreportservice", "name": "Oculus Bug Report Service", "category": "Telemetry & Ads", "affects": "Background Bug Capture Daemon", "tier": "SAFE", "presets": ["telemetry", "safe", "pcvr"], "description": "Background diagnostic capture and bug report collection daemon."}, {"package": "com.oculus.quickpromotionservice", "name": "Quick Promotion / Upsells", "category": "Telemetry & Ads", "affects": "VR Home Upsell Banners & Promo Nags", "tier": "SAFE", "presets": ["telemetry", "safe", "pcvr"], "description": "Pushes promotional banners, Horizon+ upsells, and modal prompts in VR."}, {"package": "com.oculus.nux.ota", "name": "Post-Update Onboarding Prompts", "category": "Telemetry & Ads", "affects": "Post-Update Promo & Onboarding Cards", "tier": "SAFE", "presets": ["telemetry", "safe", "pcvr"], "description": "Post-OTA new-user experience onboarding and promotional cards."}, {"package": "com.oculus.backuptransportservice", "name": "Meta Cloud Backup Transport", "category": "Telemetry & Ads", "affects": "Meta Cloud Backup Sync (ADB unaffected)", "tier": "SAFE", "presets": ["telemetry", "safe", "pcvr"], "description": "Cloud app backup sync transport to Meta servers (ADB backup unaffected)."}, {"package": "com.oculus.q4b.mdm", "name": "Quest for Business MDM", "category": "Telemetry & Ads", "affects": "Quest for Business Enterprise MDM", "tier": "SAFE", "presets": ["telemetry", "safe", "pcvr"], "description": "Enterprise Mobile Device Management agent (unused on consumer headsets)."}, {"package": "com.facebook.wearable.system.location.service", "name": "Wearable Location Service", "category": "Telemetry & Ads", "affects": "Wearable Location Polling & RAM (~110 MB)", "tier": "SAFE", "presets": ["telemetry", "safe", "pcvr"], "description": "Resident background wearable location tracking service (~110 MB RSS)."}, {"package": "com.facebook.wearable.system.location.proxy", "name": "Wearable Location Proxy", "category": "Telemetry & Ads", "affects": "Location Proxy Background RAM (~87 MB)", "tier": "SAFE", "presets": ["telemetry", "safe", "pcvr"], "description": "Resident background proxy for Meta wearable location polling (~87 MB RSS)."}, {"package": "com.oculus.labservice", "name": "Oculus Lab Service (A/B Experiments)", "category": "Telemetry & Ads", "affects": "A/B Experiments Telemetry & RAM (~93 MB)", "tier": "SAFE", "presets": ["telemetry", "safe", "pcvr"], "description": "Active background A/B testing & feature-experimentation telemetry daemon (~93 MB PSS)."}, {"package": "com.oculus.oemconfig", "name": "Oculus Enterprise OEM Config", "category": "Telemetry & Ads", "affects": "Enterprise OEM Provisioning & RAM (~107 MB)", "tier": "SAFE", "presets": ["telemetry", "safe", "pcvr"], "description": "Enterprise MDM managed-device OEM configuration agent (~107 MB PSS)."}, {"package": "com.meta.automation.pauldron.vr", "name": "Meta Pauldron VR QA Automation", "category": "Telemetry & Ads", "affects": "Internal Meta QA Test Automation", "tier": "SAFE", "presets": ["telemetry", "safe", "pcvr"], "description": "Internal Meta QA automated test runner agent left in retail firmware."}, {"package": "com.oculus.appautomation", "name": "Oculus App Automation Service", "category": "Telemetry & Ads", "affects": "UI / App Test Automation Harness", "tier": "SAFE", "presets": ["telemetry", "safe", "pcvr"], "description": "Automated UI/app test harness service used for internal QA testing."}, {"package": "com.android.cts.ctsshim", "name": "Android CTS Test Shim", "category": "Telemetry & Ads", "affects": "Android CTS Compliance Test Stub", "tier": "SAFE", "presets": ["telemetry", "safe", "pcvr"], "description": "Empty Android Compatibility Test Suite (CTS) validation shim."}, {"package": "com.android.cts.priv.ctsshim", "name": "Android Privileged CTS Test Shim", "category": "Telemetry & Ads", "affects": "Privileged CTS Compliance Test Stub", "tier": "SAFE", "presets": ["telemetry", "safe", "pcvr"], "description": "Empty privileged Android Compatibility Test Suite (CTS) validation shim."}, {"package": "com.oculus.preshutdowntaskservice", "name": "Pre-Shutdown Dumpsys Service", "category": "Telemetry & Ads", "affects": "Pre-Reboot Dumpsys Telemetry & RAM (~98.5 MB)", "tier": "SAFE", "presets": ["telemetry", "safe", "pcvr"], "description": "Collects diagnostic dumpsys logs right before headset shutdown/reboot (~98.5 MB RSS)."}, {"package": "com.facebook.horizon", "name": "Meta Horizon Worlds", "category": "Social & Horizon", "affects": "Horizon Worlds App & Horizon Feed (621 MB APK)", "tier": "SAFE", "presets": ["safe", "pcvr"], "description": "Preinstalled Meta Horizon Worlds client and Horizon Feed integration."}, {"package": "com.oculus.facebook", "name": "Facebook VR App", "category": "Social & Horizon", "affects": "Facebook Social VR App (151 MB APK)", "tier": "SAFE", "presets": ["safe", "pcvr"], "description": "Preinstalled Facebook social VR wrapper application."}, {"package": "com.oculus.igvr", "name": "Instagram VR App", "category": "Social & Horizon", "affects": "Instagram Social VR App (272 MB APK)", "tier": "SAFE", "presets": ["safe", "pcvr"], "description": "Preinstalled Instagram VR wrapper application."}, {"package": "com.oculus.thvr", "name": "Threads VR App", "category": "Social & Horizon", "affects": "Threads Social VR App (19 MB APK)", "tier": "SAFE", "presets": ["safe", "pcvr"], "description": "Preinstalled Threads social media VR wrapper application."}, {"package": "com.facebook.arvr.quillplayer", "name": "Theater Elsewhere / Quill Player", "category": "Bloat & Demos", "affects": "Theater Elsewhere Animation Demo (26 MB APK)", "tier": "SAFE", "presets": ["safe", "pcvr"], "description": "Preinstalled Quill VR animation viewer and Showcase demos."}, {"package": "com.oculus.samples.firsthand", "name": "First Hand Demo", "category": "Bloat & Demos", "affects": "First Hand Tracking Demo (569 MB APK)", "tier": "SAFE", "presets": ["safe", "pcvr"], "description": "Preinstalled Meta hand-tracking onboarding demonstration app."}, {"package": "com.meta.handseducationmodule", "name": "Hands Education Module", "category": "Bloat & Demos", "affects": "Hand Gesture Tutorial Overlay (175 MB APK)", "tier": "SAFE", "presets": ["safe", "pcvr"], "description": "Interactive tutorial overlay for Quest hand gestures."}, {"package": "com.meta.curio.ruler", "name": "Curio Mixed-Reality Ruler", "category": "Bloat & Demos", "affects": "MR Ruler Novelty Utility (70 MB APK)", "tier": "SAFE", "presets": ["safe", "pcvr"], "description": "Preinstalled MR ruler novelty utility."}, {"package": "com.meta.curio.toybox", "name": "Curio Mixed-Reality Toybox", "category": "Bloat & Demos", "affects": "MR Toybox Novelty Demo (311 MB APK)", "tier": "SAFE", "presets": ["safe", "pcvr"], "description": "Preinstalled MR toybox novelty mini-app."}, {"package": "com.oculus.assistant", "name": "Meta Voice Assistant", "category": "Bloat & Demos", "affects": "Meta Voice Trigger & Mic Listener", "tier": "SAFE", "presets": ["safe", "pcvr"], "description": "Meta voice command listener and assistant background daemon."}, {"package": "com.oculus.guidebook", "name": "Quest Guidebook", "category": "Bloat & Demos", "affects": "Guidebook Tips Background RAM (~112 MB)", "tier": "SAFE", "presets": ["safe", "pcvr"], "description": "Resident background tips & onboarding guidebook service (~112 MB RSS)."}, {"package": "com.oculus.helpcenter", "name": "Meta Help Center", "category": "Bloat & Demos", "affects": "Meta Help Viewer Cached RAM (~118 MB)", "tier": "SAFE", "presets": ["safe", "pcvr"], "description": "Meta support articles & troubleshooting viewer (~118 MB cached RSS)."}, {"package": "com.oculus.vrprivacycheckup", "name": "VR Privacy Checkup Prompts", "category": "Bloat & Demos", "affects": "Periodic Privacy Wizard Notifications", "tier": "SAFE", "presets": ["safe", "pcvr"], "description": "Periodic Meta privacy checkup wizard notifications."}, {"package": "com.oculus.panelapp.calendar", "name": "Oculus Calendar Panel", "category": "Bloat & Demos", "affects": "Legacy Horizon Home Calendar Widget", "tier": "SAFE", "presets": ["safe", "pcvr"], "description": "Legacy Horizon Home calendar dock widget."}, {"package": "com.meta.environment.prod.nuxd", "name": "Meta NUX Onboarding Daemon", "category": "Bloat & Demos", "affects": "New-User Setup Onboarding Daemon", "tier": "SAFE", "presets": ["safe", "pcvr"], "description": "New-User Experience (NUX) onboarding daemon not needed after setup."}, {"package": "com.meta.surfacetypingnux", "name": "Meta Surface Typing Tutorial (NUX)", "category": "Bloat & Demos", "affects": "Direct-Touch Surface Typing Tutorial", "tier": "SAFE", "presets": ["safe", "pcvr"], "description": "Onboarding tutorial prompt for direct-touch surface typing."}, {"package": "com.meta.HyperscapeHmdCapture", "name": "Meta Hyperscape Room Capture", "category": "Bloat & Demos", "affects": "Hyperscape Room Photogrammetry (Guardian OK)", "tier": "SAFE", "presets": ["safe", "pcvr"], "description": "Cloud room-photogrammetry capture app (keeps local Guardian intact)."}, {"package": "com.oculus.panelapp.kiosk", "name": "Oculus Retail Kiosk Mode Panel", "category": "Bloat & Demos", "affects": "Retail Store Demo Kiosk Panel", "tier": "SAFE", "presets": ["safe", "pcvr"], "description": "Commercial / retail store demo kiosk mode panel."}, {"package": "com.microsoft.rdc.androidx", "name": "Microsoft Windows App (RDP Stub)", "category": "Bloat & Demos", "affects": "Microsoft Windows Remote Desktop Stub (91 MB)", "tier": "SAFE", "presets": ["safe", "pcvr"], "description": "Preinstalled Microsoft Remote Desktop client stub."}, {"package": "com.android.managedprovisioning", "name": "Android Work Profile Provisioning", "category": "Bloat & Demos", "affects": "Corporate Work Profile MDM & RAM (~95 MB)", "tier": "SAFE", "presets": ["safe", "pcvr"], "description": "Corporate BYOD work-profile MDM provisioning wizard (~95 MB PSS)."}, {"package": "com.android.providers.tv", "name": "Android TV Live Channels Provider", "category": "Bloat & Demos", "affects": "Unused Android TV Tuner DB & RAM (~99 MB)", "tier": "SAFE", "presets": ["safe", "pcvr"], "description": "Android TV broadcast tuner database provider unused on VR headsets (~99 MB PSS)."}, {"package": "com.android.providers.calendar", "name": "Android Calendar Storage Provider", "category": "Bloat & Demos", "affects": "Android Calendar Sync DB & RAM (~99 MB)", "tier": "SAFE", "presets": ["safe", "pcvr"], "description": "Background calendar database provider that still wakes up in RAM (~99 MB PSS)."}, {"package": "com.android.healthconnect.controller", "name": "Android Health Connect Controller", "category": "Bloat & Demos", "affects": "Phone Health Connect Fitness UI", "tier": "SAFE", "presets": ["safe", "pcvr"], "description": "Android 14 phone fitness/health data sharing controller UI."}, {"package": "com.android.health.connect.backuprestore", "name": "Android Health Connect Backup", "category": "Bloat & Demos", "affects": "Phone Health Connect Cloud Backup", "tier": "SAFE", "presets": ["safe", "pcvr"], "description": "Background cloud backup helper for Android Health Connect."}, {"package": "com.android.bookmarkprovider", "name": "Android Legacy Bookmark Provider", "category": "Bloat & Demos", "affects": "Legacy AOSP Browser Bookmark DB", "tier": "SAFE", "presets": ["safe", "pcvr"], "description": "Obsolete AOSP browser bookmark content provider."}, {"package": "com.android.providers.blockednumber", "name": "Android Call Blocked Number Provider", "category": "Bloat & Demos", "affects": "Phone Call-Blocking DB (No Cellular Radio)", "tier": "SAFE", "presets": ["safe", "pcvr"], "description": "Telephony call/SMS spam blocking database (Quest has no cellular radio)."}, {"package": "com.android.nearby.halfsheet", "name": "Android Nearby Share Halfsheet", "category": "Bloat & Demos", "affects": "Google Nearby Share Pairing Pop-up Stub", "tier": "SAFE", "presets": ["safe", "pcvr"], "description": "Google Nearby device pairing pop-up sheet stub."}, {"package": "com.oculus.ovrmonitormetricsservice", "name": "OVR Metrics Stub Service", "category": "Bloat & Demos", "affects": "Developer Metrics Factory Stub", "tier": "SAFE", "presets": ["safe", "pcvr"], "description": "Empty 1.0 factory stub for the optional developer OVR Metrics Tool."}, {"package": "com.meta.linktabula.viewer", "name": "Link Tabula Stub Viewer", "category": "Bloat & Demos", "affects": "Unused Internal LinkTabula Stub", "tier": "SAFE", "presets": ["safe", "pcvr"], "description": "Internal Meta viewer package exposing only a dummy StubActivity."}, {"package": "com.oculus.socialplatform", "name": "Oculus Social Platform", "category": "Social & Horizon", "affects": "Parties, Voice Chat & Friends RAM (~127 MB)", "tier": "MODERATE", "presets": ["pcvr"], "description": "Parties, voice calls, friends status, and social feed notifications (~127 MB RSS)."}, {"package": "com.oculus.presence", "name": "Live User Presence Service", "category": "Social & Horizon", "affects": "Friends Online Status & App Presence", "tier": "MODERATE", "presets": ["pcvr"], "description": "Reports active app and online presence state to Meta friends list."}, {"package": "com.oculus.avatareditor", "name": "Meta Avatar Editor", "category": "Social & Horizon", "affects": "3D Meta Avatar Editor & Avatar RAM", "tier": "MODERATE", "presets": ["pcvr"], "description": "3D Meta Avatar customization editor (heavy memory footprint when loaded)."}, {"package": "com.oculus.tv", "name": "Meta Quest TV", "category": "Bloat & Demos", "affects": "Meta Quest TV 180/360 Streaming App", "tier": "MODERATE", "presets": ["pcvr"], "description": "Preinstalled Meta Quest TV 180/360 media streaming app."}, {"package": "com.oculus.remotedesktop", "name": "Meta Remote Desktop", "category": "Bloat & Demos", "affects": "Workrooms Built-in Remote Desktop Panel", "tier": "MODERATE", "presets": ["pcvr"], "description": "Built-in Meta Workrooms remote desktop panel (safe if using Virtual Desktop)."}, {"package": "com.oculus.horizonmediaplayer", "name": "Meta Horizon Media Player", "category": "Bloat & Demos", "affects": "Built-in Media Player & RAM (~125 MB)", "tier": "MODERATE", "presets": ["pcvr"], "description": "Built-in 2D/VR local media viewer (~125 MB PSS; safe if using Skybox/DeoVR/PCVR)."}, {"package": "com.oculus.accountscenter", "name": "Meta Accounts Center App", "category": "Social & Horizon", "affects": "Meta / IG / FB Account Linking Settings", "tier": "MODERATE", "presets": ["pcvr"], "description": "Cross-app Meta/Facebook/Instagram account linking UI."}, {"package": "com.meta.AccountsCenter.pwa", "name": "Meta Accounts Center PWA", "category": "Social & Horizon", "affects": "Accounts Center Web Wrapper", "tier": "MODERATE", "presets": ["pcvr"], "description": "Web wrapper companion for Meta Accounts Center."}, {"package": "com.meta.shell.env.vista.calming", "name": "Home Env: Calming", "category": "Environments", "affects": "Calming Virtual Home Skybox Theme", "tier": "MODERATE", "presets": ["pcvr"], "description": "Extra Vista Home virtual environment theme (keeps default Haven 2025 intact)."}, {"package": "com.meta.shell.env.vista.focused", "name": "Home Env: Focused", "category": "Environments", "affects": "Focused Virtual Home Skybox Theme", "tier": "MODERATE", "presets": ["pcvr"], "description": "Extra Vista Home virtual environment theme (keeps default Haven 2025 intact)."}, {"package": "com.meta.shell.env.vista.horror", "name": "Home Env: Horror", "category": "Environments", "affects": "Horror Virtual Home Skybox Theme", "tier": "MODERATE", "presets": ["pcvr"], "description": "Extra Vista Home virtual environment theme (keeps default Haven 2025 intact)."}, {"package": "com.meta.shell.env.vista.oceanarium", "name": "Home Env: Oceanarium", "category": "Environments", "affects": "Oceanarium Virtual Home Skybox Theme", "tier": "MODERATE", "presets": ["pcvr"], "description": "Extra Vista Home virtual environment theme (keeps default Haven 2025 intact)."}, {"package": "com.meta.rl.trust.service", "name": "Reality Labs Consent & Privacy UI", "category": "Telemetry & Ads", "affects": "On-Boot ToS / Consent Prompts & RAM (~138 MB)", "tier": "MODERATE", "presets": ["pcvr"], "description": "On-boot & NUX regional privacy consent prompts (~138.3 MB RSS; re-enable briefly after major OS updates if ToS re-acceptance is requested)."}, {"package": "com.oculus.mrds", "name": "Meta Remote Desktop Service (MRDS)", "category": "Bloat & Demos", "affects": "Built-in Meta Remote Desktop Companion", "tier": "MODERATE", "presets": ["pcvr"], "description": "Companion service for Meta Workrooms / Remote Desktop (safe to disable if using Virtual Desktop, Steam Link, or Quest Link)."}, {"package": "com.oculus.captionservice", "name": "Horizon OS Live Captions", "category": "Bloat & Demos", "affects": "System Speech-to-Text Live Captions", "tier": "MODERATE", "presets": ["pcvr"], "description": "Accessibility speech-to-text closed-caption service (safe to disable if you do not use system live captions)."}, {"package": "com.oculus.store", "name": "Meta Horizon Store", "category": "Caution", "affects": "Official Store & App Updates (~237 MB RAM)", "tier": "CAUTION", "presets": [], "description": "Official Store UI (~237 MB resident RAM). Only disable if using sideloading/PCVR only."}, {"package": "com.oculus.browser", "name": "Meta Quest Browser", "category": "Caution", "affects": "Built-in Meta WebXR Chromium Browser", "tier": "CAUTION", "presets": [], "description": "Default WebXR Chromium browser. Safe to keep unless replaced by another browser."}, {"package": "com.oculus.hzosgallery", "name": "Horizon OS Media Gallery", "category": "Caution", "affects": "VR Screenshots & Spatial Gallery (~120 MB)", "tier": "CAUTION", "presets": [], "description": "Screenshot and spatial video gallery viewer (~120 MB RSS)."}, {"package": "com.oculus.magicislandcastingservice", "name": "Meta Native Casting Service", "category": "Caution", "affects": "Native Horizon OS Cast Receiver", "tier": "CAUTION", "presets": [], "description": "Horizon OS native casting daemon (VRmoo uses ADB/scrcpy instead)."}, {"package": "com.oculus.xrstreamingclient", "name": "Meta Quest Link / Air Link", "category": "Caution", "affects": "Official Wired Link & Wireless Air Link", "tier": "CAUTION", "presets": [], "description": "Official wired Link / wireless Air Link client (safe to disable if using Virtual Desktop / ALVR)."}, {"package": "com.meta.pclinkservice.server", "name": "Meta PC Link Server", "category": "Caution", "affects": "Meta PC Link USB/Wi-Fi Discovery", "tier": "CAUTION", "presets": [], "description": "PC Link discovery server companion on the headset."}, {"package": "com.oculus.appsafety", "name": "App Safety Integrity Monitor", "category": "Caution", "affects": "Sideloaded App Integrity Scanner (~121 MB)", "tier": "CAUTION", "presets": [], "description": "Checks sideloaded/unofficial apps against Meta safety policies (~121 MB RSS)."}, {"package": "com.oculus.websafety", "name": "Web Safety Filter", "category": "Caution", "affects": "Browser Malicious URL Safety Filter", "tier": "CAUTION", "presets": [], "description": "URL safety scanner used by Meta Quest Browser links."}, {"package": "com.oculus.systemintelligence", "name": "System Intelligence & TTS", "category": "Caution", "affects": "Voice Dictation, TTS & Live Config (~208 MB)", "tier": "CAUTION", "presets": [], "description": "Text-to-speech engine, dictation & DeviceConfig (~208 MB RSS; UPDATED_SYSTEM_APP that can break OS accessibility/voice features or silently re-enable on OTA)."}, {"package": "com.oculus.metacam", "name": "Horizon Camera & Recording UI", "category": "Caution", "affects": "Screenshots, Video Capture & Casting (~166 MB)", "tier": "CAUTION", "presets": [], "description": "Meta screenshot, video recording, sharing panel & livestream overlay (~166.3 MB RSS; disabling breaks VR screenshot/recording capture)."}, {"package": "com.oculus.notification_proxy", "name": "Notification Proxy (Oculess Legacy)", "category": "Caution", "affects": "Phone-to-VR Notification Mirror & Alerts", "tier": "CAUTION", "presets": [], "description": "Legacy Oculess-targeted notification proxy (marked PERSISTENT on Horizon OS Android 14+; disabling may throw SecurityException or mute system alerts)."}, {"package": "com.oculus.vrshell", "name": "Horizon OS VR Shell (HOME)", "category": "Protected", "affects": "VR Launcher & Spatial Compositor (Critical)", "tier": "PROTECTED", "presets": [], "description": "Primary VR launcher & compositor host. Disabling bricks headset UI."}, {"package": "com.oculus.systemux", "name": "SystemUX Universal Menu", "category": "Protected", "affects": "Universal Menu, Quick Settings & Overlays (Critical)", "tier": "PROTECTED", "presets": [], "description": "Core Universal Menu, Quick Settings, dialogs, and overlays."}, {"package": "com.oculus.systemdriver", "name": "Oculus System Driver", "category": "Protected", "affects": "6DoF Headset/Controller Tracking Drivers (Critical)", "tier": "PROTECTED", "presets": [], "description": "6DoF headset/controller tracking and core hardware runtime driver."}, {"package": "com.oculus.systemactivities", "name": "Oculus System Activities", "category": "Protected", "affects": "Core Permission & Power Dialogs (Critical)", "tier": "PROTECTED", "presets": [], "description": "Core VR permission prompts and power/exit dialogs."}, {"package": "com.oculus.systemutilities", "name": "Oculus System Utilities", "category": "Protected", "affects": "Volume, Brightness & OS Utilities (Critical)", "tier": "PROTECTED", "presets": [], "description": "Low-level Horizon OS system utilities and volume/brightness panels."}, {"package": "com.oculus.guardian", "name": "Guardian Boundary Engine", "category": "Protected", "affects": "Playspace Guardian Boundary & Passthrough (Critical)", "tier": "PROTECTED", "presets": [], "description": "Playspace boundary and passthrough safety guardian system."}, {"package": "com.oculus.guardianresources", "name": "Guardian Resources", "category": "Protected", "affects": "Guardian Shaders & Safety Assets (Critical)", "tier": "PROTECTED", "presets": [], "description": "Assets and shaders for the Guardian safety boundary."}, {"package": "com.oculus.guardiansetup", "name": "Guardian Setup UI", "category": "Protected", "affects": "Room Scan & Boundary Drawing Flow (Critical)", "tier": "PROTECTED", "presets": [], "description": "Room scan and boundary drawing workflow."}, {"package": "com.oculus.ocms", "name": "Oculus Content Management (OCMS)", "category": "Protected", "affects": "App Library, Installs & Entitlements (Critical)", "tier": "PROTECTED", "presets": [], "description": "App library indexing, entitlement verification, and install service."}, {"package": "com.oculus.userserver2", "name": "Horizon Multi-User Server", "category": "Protected", "affects": "Active Horizon OS User Profile Session (Critical)", "tier": "PROTECTED", "presets": [], "description": "Active Android/Horizon OS user profile session daemon."}, {"package": "com.oculus.companion.server", "name": "Meta Horizon Phone Companion", "category": "Protected", "affects": "Phone Companion Pairing & Developer Mode (Critical)", "tier": "PROTECTED", "presets": [], "description": "Keeps Developer Mode, pairing, and controller calibration accessible."}, {"package": "com.oculus.identitymanagement.service", "name": "Oculus Identity Management", "category": "Protected", "affects": "Account Identity & Store Game DRM (Critical)", "tier": "PROTECTED", "presets": [], "description": "Required by system shell and store-licensed VR games."}, {"package": "com.oculus.deviceauthserver", "name": "Device Authentication Server", "category": "Protected", "affects": "Hardware Attestation & DRM Tokens (Critical)", "tier": "PROTECTED", "presets": [], "description": "Hardware device attestation and entitlement token service."}, {"package": "com.meta.systemui", "name": "Meta Android SystemUI", "category": "Protected", "affects": "Android SystemUI & USB Debugging RSA Dialog (Critical)", "tier": "PROTECTED", "presets": [], "description": "Core Android SystemUI status bar, notifications, and ADB RSA prompt."}, {"package": "horizonos.platform", "name": "Horizon OS Platform Services", "category": "Protected", "affects": "Core Horizon OS SDK Runtime (Critical)", "tier": "PROTECTED", "presets": [], "description": "Core Horizon OS SDK runtime platform."}, {"package": "horizonos.openxr.runtimebroker", "name": "Horizon OpenXR Runtime Broker", "category": "Protected", "affects": "OpenXR Runtime for All VR & PCVR Apps (Critical)", "tier": "PROTECTED", "presets": [], "description": "OpenXR runtime broker required by all VR games, Virtual Desktop, and SteamVR."}, {"package": "oculus.platform", "name": "Oculus Platform SDK", "category": "Protected", "affects": "Shared Oculus Platform Game IPC (Critical)", "tier": "PROTECTED", "presets": [], "description": "Shared Oculus platform IPC runtime for installed VR titles."}, {"package": "com.oculus.horizon", "name": "Horizon Mobile/Companion Core", "category": "Protected", "affects": "App Auth, Entitlements & Presence (~208 MB)", "tier": "PROTECTED", "presets": [], "description": "Core Oculus Horizon runtime & entitlement service (~208.3 MB RSS). Disabling causes bootloop or broken VR app launches."}, {"package": "com.facebook.spatial_persistence_service", "name": "Spatial Anchors & Boundary Mesh", "category": "Protected", "affects": "Mixed Reality Anchors & Room Setup (~153 MB)", "tier": "PROTECTED", "presets": [], "description": "Persistent spatial anchor & room scan service (~153.4 MB RSS). Critical for Guardian/Mixed Reality boundaries."}, {"package": "com.oculus.linefrequencyservice", "name": "Anti-Flicker Tracking Camera Service", "category": "Protected", "affects": "Tracking Camera 50/60Hz Lighting Calibration", "tier": "PROTECTED", "presets": [], "description": "Calibrates headset tracking cameras to indoor 50/60 Hz AC lighting (~99 MB RSS). Required for stable 6DoF tracking."}, {"package": "com.oculus.bodyapiservice", "name": "Upper Body & IOBT Tracking API", "category": "Protected", "affects": "Inside-Out Upper Body & Hand Tracking API", "tier": "PROTECTED", "presets": [], "description": "Horizon OS inside-out body & hand tracking API daemon. Disabling breaks VR avatar & controller tracking."}, {"package": "com.oculus.connectivity.bluetooth", "name": "Quest Bluetooth Stack Helper", "category": "Protected", "affects": "Bluetooth Audio, Gamepads & Phone Sync (~109 MB)", "tier": "PROTECTED", "presets": [], "description": "Meta Bluetooth pairing & peripheral stack helper (~108.7 MB RSS). Disabling breaks Bluetooth controllers, audio & phone setup."}, {"package": "com.oculus.vralertservice", "name": "VR Thermal & Battery Safety Alerts", "category": "Protected", "affects": "Critical Overheat & Battery Shutdown Warnings", "tier": "PROTECTED", "presets": [], "description": "Critical thermal, charging port & safety alert overlay daemon. Never disable on standalone VR hardware."}, {"package": "com.oculus.integrity", "name": "Horizon OS App Integrity Runtime", "category": "Protected", "affects": "OS Signature & Safety Integrity Checks", "tier": "PROTECTED", "presets": [], "description": "Horizon OS package signature & security integrity verification component."}];
+    const CATEGORIES = ['All', 'Telemetry & Ads', 'Social & Horizon', 'Bloat & Demos', 'Environments', 'Caution', 'Protected'];
     const selected = new Set(PACKAGES.filter(p => p.presets.includes('safe')).map(p => p.package));
+    let activeCategory = 'All';
+    let selectedOnly = false;
+    let scriptMode = 'disable';
+    let copyTimer = null;
+
+    function categoryCount(cat) {
+      if (cat === 'All') return PACKAGES.length;
+      if (cat === 'Caution') return PACKAGES.filter(p => p.tier === 'CAUTION').length;
+      if (cat === 'Protected') return PACKAGES.filter(p => p.tier === 'PROTECTED').length;
+      return PACKAGES.filter(p => p.category === cat).length;
+    }
+
+    function renderCategories() {
+      const row = document.getElementById('catRow');
+      row.innerHTML = '';
+      CATEGORIES.forEach(cat => {
+        const btn = document.createElement('button');
+        btn.className = 'cat-pill' + (activeCategory === cat ? ' active' : '');
+        btn.textContent = `${cat} (${categoryCount(cat)})`;
+        btn.onclick = () => { activeCategory = cat; render(); };
+        row.appendChild(btn);
+      });
+      const selBtn = document.createElement('button');
+      selBtn.className = 'cat-pill sel-toggle' + (selectedOnly ? ' active' : '');
+      selBtn.textContent = `Queued Only (${selected.size})`;
+      selBtn.onclick = () => { selectedOnly = !selectedOnly; render(); };
+      row.appendChild(selBtn);
+    }
+
     function selectPreset(name) {
       selected.clear();
-      if (name !== 'none') PACKAGES.forEach(p => { if (p.tier !== 'PROTECTED' && p.presets.includes(name)) selected.add(p.package); });
+      if (name !== 'none') {
+        PACKAGES.forEach(p => { if (p.tier !== 'PROTECTED' && p.presets.includes(name)) selected.add(p.package); });
+      }
       render();
     }
-    function togglePkg(pkg) {
+
+    function togglePkg(pkg, event) {
+      if (event && (event.target.tagName === 'CODE' || window.getSelection().toString().length > 0)) return;
+      const item = PACKAGES.find(p => p.package === pkg);
+      if (!item || item.tier === 'PROTECTED') return;
       if (selected.has(pkg)) selected.delete(pkg); else selected.add(pkg);
+      render();
+    }
+
+    function onSearchInput() {
+      const q = document.getElementById('q').value;
+      document.getElementById('clearSearch').style.display = q.length ? 'inline-flex' : 'none';
+      render();
+    }
+
+    function clearSearch() {
+      const inp = document.getElementById('q');
+      inp.value = '';
+      inp.focus();
+      onSearchInput();
+    }
+
+    function setScriptMode(mode) {
+      scriptMode = mode;
+      ['disable', 'restore', 'ps1'].forEach(m => {
+        document.getElementById('tab-' + m).classList.toggle('active', m === mode);
+      });
       updateScript();
     }
+
+    function escHtml(s) {
+      return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
     function render() {
-      const q = document.getElementById('q').value.toLowerCase();
+      renderCategories();
+      const q = document.getElementById('q').value.trim().toLowerCase();
       const grid = document.getElementById('grid');
       grid.innerHTML = '';
-      PACKAGES.filter(p => !q || p.package.toLowerCase().includes(q) || p.name.toLowerCase().includes(q) || p.description.toLowerCase().includes(q) || p.category.toLowerCase().includes(q) || (p.affects||"").toLowerCase().includes(q))
-        .forEach(p => {
+
+      const filtered = PACKAGES.filter(p => {
+        const catOk = activeCategory === 'All'
+          || (activeCategory === 'Caution' && p.tier === 'CAUTION')
+          || (activeCategory === 'Protected' && p.tier === 'PROTECTED')
+          || p.category === activeCategory;
+        if (!catOk) return false;
+        if (selectedOnly && !selected.has(p.package)) return false;
+        if (!q) return true;
+        return p.package.toLowerCase().includes(q)
+          || p.name.toLowerCase().includes(q)
+          || p.description.toLowerCase().includes(q)
+          || p.category.toLowerCase().includes(q)
+          || (p.affects || '').toLowerCase().includes(q)
+          || p.tier.toLowerCase().includes(q);
+      });
+
+      if (filtered.length === 0) {
+        grid.innerHTML = '<div class="empty-state">No Horizon OS packages match the active filter.</div>';
+      } else {
+        filtered.forEach(p => {
           const locked = p.tier === 'PROTECTED';
-          const div = document.createElement('div');
-          div.className = 'card' + (locked ? ' locked' : '');
-          div.innerHTML = `<input type="checkbox" ${selected.has(p.package)?'checked':''} ${locked?'disabled':''} onchange="togglePkg('${p.package}')">
-            <div><div><strong>${p.name}</strong><span class="badge ${p.tier}">${p.tier}</span></div>
-            <div class="pkg">${p.package}</div><div class="desc" style="color:#93c5fd;margin-bottom:3px">Affects: ${p.affects || p.category}</div><div class="desc">${p.description}</div></div>`;
-          grid.appendChild(div);
+          const isChecked = selected.has(p.package);
+          const card = document.createElement('div');
+          card.className = 'card' + (locked ? ' locked' : '') + (isChecked ? ' is-selected' : '');
+          card.onclick = (ev) => togglePkg(p.package, ev);
+
+          const checkHtml = locked
+            ? `<div class="lock-icon" title="Hard-locked protected package"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>`
+            : `<input type="checkbox" ${isChecked ? 'checked' : ''} aria-label="Select ${escHtml(p.name)}" onclick="event.stopPropagation(); togglePkg('${p.package}')" />`;
+
+          card.innerHTML = `
+            <div class="card-check">${checkHtml}</div>
+            <div class="card-body">
+              <div class="card-head">
+                <div class="card-title">${escHtml(p.name)}</div>
+                <span class="badge ${p.tier}">${p.tier}</span>
+              </div>
+              <div class="pkg">${escHtml(p.package)}</div>
+              <div class="affects-chip">Affects: ${escHtml(p.affects || p.category)}</div>
+              <div class="desc">${escHtml(p.description)}</div>
+            </div>`;
+          grid.appendChild(card);
         });
+      }
+
+      updateKpis();
       updateScript();
     }
+
+    function updateKpis() {
+      const selList = PACKAGES.filter(p => selected.has(p.package) && p.tier !== 'PROTECTED');
+      const safeN = selList.filter(p => p.tier === 'SAFE').length;
+      const modN = selList.filter(p => p.tier === 'MODERATE').length;
+      const cauN = selList.filter(p => p.tier === 'CAUTION').length;
+      const nonProtectedTotal = PACKAGES.filter(p => p.tier !== 'PROTECTED').length;
+
+      document.getElementById('kpi-selected').textContent = `${selList.length} queued`;
+      document.getElementById('kpi-breakdown').textContent = `${safeN} SAFE • ${modN} MOD • ${cauN} CAU`;
+      document.getElementById('kpi-progress').style.width = `${Math.round((selList.length / Math.max(1, nonProtectedTotal)) * 100)}%`;
+      document.getElementById('kpi-tier-tag').textContent =
+        selList.length === 0 ? 'NONE' : (cauN > 0 ? 'CUSTOM + CAUTION' : (modN > 0 ? 'PCVR / CUSTOM' : 'SAFE PRESET'));
+    }
+
     function buildCmds(mode) {
       const list = PACKAGES.filter(p => selected.has(p.package) && p.tier !== 'PROTECTED').map(p => p.package);
+      if (list.length === 0) return '';
       if (mode === 'restore') return list.map(p => `adb shell pm enable ${p}`).join('\n');
-      return list.map(p => `adb shell pm disable-user --user 0 ${p} && adb shell am force-stop ${p}`).join('\n');
+      if (mode === 'ps1') {
+        const quoted = list.map(p => `  '${p}'`).join(",\n");
+        return `$pkgs = @(\n${quoted}\n)\nforeach ($p in $pkgs) {\n  adb shell "pm disable-user --user 0 $p && am force-stop $p"\n}`;
+      }
+      return list.map(p => `adb shell "pm disable-user --user 0 ${p} && am force-stop ${p}"`).join('\n');
     }
+
     function updateScript() {
-      document.getElementById('count').textContent = `${selected.size} packages selected`;
-      document.getElementById('script').textContent = buildCmds('disable') || '# Select a preset or package above';
+      const n = selected.size;
+      document.getElementById('count').textContent = `${n} command${n === 1 ? '' : 's'} ready`;
+      document.getElementById('script').textContent = buildCmds(scriptMode) || '# Select a preset or one or more packages above';
     }
-    function copyScript(mode) { navigator.clipboard.writeText(buildCmds(mode)); }
+
+    async function copyScript() {
+      const txt = buildCmds(scriptMode);
+      if (!txt) return;
+      try { await navigator.clipboard.writeText(txt); } catch {}
+      const btn = document.getElementById('copyBtn');
+      const lbl = document.getElementById('copyLabel');
+      btn.classList.add('copied');
+      lbl.textContent = 'Copied to clipboard!';
+      clearTimeout(copyTimer);
+      copyTimer = setTimeout(() => {
+        btn.classList.remove('copied');
+        lbl.textContent = 'Copy Script';
+      }, 1800);
+    }
+
+    function downloadScript() {
+      const txt = buildCmds(scriptMode);
+      if (!txt) return;
+      const ext = scriptMode === 'ps1' ? 'ps1' : 'sh';
+      const prefix = scriptMode === 'restore' ? 'quest3-restore' : 'quest3-debloat';
+      const content = ext === 'sh' ? '#!/usr/bin/env bash\nset -e\n' + txt + '\n' : txt + '\n';
+      const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `${prefix}.${ext}`;
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }
+
     render();
   </script>
 </body>
