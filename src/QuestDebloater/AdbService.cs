@@ -19,6 +19,16 @@ public sealed class AdbService
         "com.android.ext.adservices.api",
         "com.android.ondevicepersonalization.services",
         "com.android.federatedcompute.services",
+        "com.android.managedprovisioning",
+        "com.android.providers.tv",
+        "com.android.providers.calendar",
+        "com.android.healthconnect.controller",
+        "com.android.health.connect.backuprestore",
+        "com.android.cts.ctsshim",
+        "com.android.cts.priv.ctsshim",
+        "com.android.bookmarkprovider",
+        "com.android.providers.blockednumber",
+        "com.android.nearby.halfsheet",
     };
 
     public string AdbPath { get; }

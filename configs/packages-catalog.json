@@ -115,6 +115,54 @@
       "description": "Resident background proxy for Meta wearable location polling (~87 MB RSS)."
     },
     {
+      "package": "com.oculus.labservice",
+      "name": "Oculus Lab Service (A/B Experiments)",
+      "category": "Telemetry & Ads",
+      "tier": "SAFE",
+      "presets": ["telemetry", "safe", "pcvr"],
+      "description": "Active background A/B testing & feature-experimentation telemetry daemon (~93 MB PSS)."
+    },
+    {
+      "package": "com.oculus.oemconfig",
+      "name": "Oculus Enterprise OEM Config",
+      "category": "Telemetry & Ads",
+      "tier": "SAFE",
+      "presets": ["telemetry", "safe", "pcvr"],
+      "description": "Enterprise MDM managed-device OEM configuration agent (~107 MB PSS)."
+    },
+    {
+      "package": "com.meta.automation.pauldron.vr",
+      "name": "Meta Pauldron VR QA Automation",
+      "category": "Telemetry & Ads",
+      "tier": "SAFE",
+      "presets": ["telemetry", "safe", "pcvr"],
+      "description": "Internal Meta QA automated test runner agent left in retail firmware."
+    },
+    {
+      "package": "com.oculus.appautomation",
+      "name": "Oculus App Automation Service",
+      "category": "Telemetry & Ads",
+      "tier": "SAFE",
+      "presets": ["telemetry", "safe", "pcvr"],
+      "description": "Automated UI/app test harness service used for internal QA testing."
+    },
+    {
+      "package": "com.android.cts.ctsshim",
+      "name": "Android CTS Test Shim",
+      "category": "Telemetry & Ads",
+      "tier": "SAFE",
+      "presets": ["telemetry", "safe", "pcvr"],
+      "description": "Empty Android Compatibility Test Suite (CTS) validation shim."
+    },
+    {
+      "package": "com.android.cts.priv.ctsshim",
+      "name": "Android Privileged CTS Test Shim",
+      "category": "Telemetry & Ads",
+      "tier": "SAFE",
+      "presets": ["telemetry", "safe", "pcvr"],
+      "description": "Empty privileged Android Compatibility Test Suite (CTS) validation shim."
+    },
+    {
       "package": "com.facebook.horizon",
       "name": "Meta Horizon Worlds",
       "category": "Social & Horizon",
@@ -227,6 +275,110 @@
       "description": "Legacy Horizon Home calendar dock widget."
     },
     {
+      "package": "com.meta.environment.prod.nuxd",
+      "name": "Meta NUX Onboarding Daemon",
+      "category": "Bloat & Demos",
+      "tier": "SAFE",
+      "presets": ["safe", "pcvr"],
+      "description": "New-User Experience (NUX) onboarding daemon not needed after setup."
+    },
+    {
+      "package": "com.meta.surfacetypingnux",
+      "name": "Meta Surface Typing Tutorial (NUX)",
+      "category": "Bloat & Demos",
+      "tier": "SAFE",
+      "presets": ["safe", "pcvr"],
+      "description": "Onboarding tutorial prompt for direct-touch surface typing."
+    },
+    {
+      "package": "com.meta.HyperscapeHmdCapture",
+      "name": "Meta Hyperscape Room Capture",
+      "category": "Bloat & Demos",
+      "tier": "SAFE",
+      "presets": ["safe", "pcvr"],
+      "description": "Cloud room-photogrammetry capture app (keeps local Guardian intact)."
+    },
+    {
+      "package": "com.oculus.panelapp.kiosk",
+      "name": "Oculus Retail Kiosk Mode Panel",
+      "category": "Bloat & Demos",
+      "tier": "SAFE",
+      "presets": ["safe", "pcvr"],
+      "description": "Commercial / retail store demo kiosk mode panel."
+    },
+    {
+      "package": "com.microsoft.rdc.androidx",
+      "name": "Microsoft Windows App (RDP Stub)",
+      "category": "Bloat & Demos",
+      "tier": "SAFE",
+      "presets": ["safe", "pcvr"],
+      "description": "Preinstalled Microsoft Remote Desktop client stub."
+    },
+    {
+      "package": "com.android.managedprovisioning",
+      "name": "Android Work Profile Provisioning",
+      "category": "Bloat & Demos",
+      "tier": "SAFE",
+      "presets": ["safe", "pcvr"],
+      "description": "Corporate BYOD work-profile MDM provisioning wizard (~95 MB PSS)."
+    },
+    {
+      "package": "com.android.providers.tv",
+      "name": "Android TV Live Channels Provider",
+      "category": "Bloat & Demos",
+      "tier": "SAFE",
+      "presets": ["safe", "pcvr"],
+      "description": "Android TV broadcast tuner database provider unused on VR headsets (~99 MB PSS)."
+    },
+    {
+      "package": "com.android.providers.calendar",
+      "name": "Android Calendar Storage Provider",
+      "category": "Bloat & Demos",
+      "tier": "SAFE",
+      "presets": ["safe", "pcvr"],
+      "description": "Background calendar database provider that still wakes up in RAM (~99 MB PSS)."
+    },
+    {
+      "package": "com.android.healthconnect.controller",
+      "name": "Android Health Connect Controller",
+      "category": "Bloat & Demos",
+      "tier": "SAFE",
+      "presets": ["safe", "pcvr"],
+      "description": "Android 14 phone fitness/health data sharing controller UI."
+    },
+    {
+      "package": "com.android.health.connect.backuprestore",
+      "name": "Android Health Connect Backup",
+      "category": "Bloat & Demos",
+      "tier": "SAFE",
+      "presets": ["safe", "pcvr"],
+      "description": "Background cloud backup helper for Android Health Connect."
+    },
+    {
+      "package": "com.android.bookmarkprovider",
+      "name": "Android Legacy Bookmark Provider",
+      "category": "Bloat & Demos",
+      "tier": "SAFE",
+      "presets": ["safe", "pcvr"],
+      "description": "Obsolete AOSP browser bookmark content provider."
+    },
+    {
+      "package": "com.android.providers.blockednumber",
+      "name": "Android Call Blocked Number Provider",
+      "category": "Bloat & Demos",
+      "tier": "SAFE",
+      "presets": ["safe", "pcvr"],
+      "description": "Telephony call/SMS spam blocking database (Quest has no cellular radio)."
+    },
+    {
+      "package": "com.android.nearby.halfsheet",
+      "name": "Android Nearby Share Halfsheet",
+      "category": "Bloat & Demos",
+      "tier": "SAFE",
+      "presets": ["safe", "pcvr"],
+      "description": "Google Nearby device pairing pop-up sheet stub."
+    },
+    {
       "package": "com.oculus.socialplatform",
       "name": "Oculus Social Platform",
       "category": "Social & Horizon",
@@ -265,6 +417,14 @@
       "tier": "MODERATE",
       "presets": ["pcvr"],
       "description": "Built-in Meta Workrooms remote desktop panel (safe if using Virtual Desktop)."
+    },
+    {
+      "package": "com.oculus.horizonmediaplayer",
+      "name": "Meta Horizon Media Player",
+      "category": "Bloat & Demos",
+      "tier": "MODERATE",
+      "presets": ["pcvr"],
+      "description": "Built-in 2D/VR local media viewer (~125 MB PSS; safe if using Skybox/DeoVR/PCVR)."
     },
     {
       "package": "com.oculus.accountscenter",

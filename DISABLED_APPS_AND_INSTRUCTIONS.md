@@ -2,13 +2,14 @@
 
 **Device Verified:** Meta Quest 3 (`eureka` • Serial `2G0YC5ZH0L0126` • Android 14 / `UP1A.231005.007.A1`)  
 **Method Used:** Reversible user-space disable (`pm disable-user --user 0 <package>`) — zero files were uninstalled, and VR Home (`com.oculus.vrshell/.HomeActivity`) was verified intact after every package.  
-**Pre-existing Disabled Package (Untouched System Default):** `com.meta.credentialsmanager` (`1 / 396` before our run -> `29 / 396` after disabling the `28` bloatware apps/services below).
+**Pre-existing Disabled Package (Untouched System Default):** `com.meta.credentialsmanager` (`1 / 396` before our run -> **`48 / 396`** after disabling all `47` `SAFE` bloatware apps/services listed below — `28` initial + `19` uncovered in the deep second-pass scan).  
+**OS-Protected Note:** `com.android.devicelockcontroller` was also evaluated during the deep scan, refused by Horizon OS with `SecurityException: Cannot disable a protected package`, and kept excluded from the safe catalog.
 
 ---
 
-## 1. Complete List of Apps & Services Turned Off (28 Packages)
+## 1. Complete List of Apps & Services Turned Off (47 Packages)
 
-### A. Telemetry, Advertising, Diagnostics & Promos (14 Background Services)
+### A. Telemetry, Advertising, QA Automation & Enterprise Services (20 Background Services)
 
 | # | Friendly Name | Package ID | Purpose / What Turning It Off Stops |
 |---:|---|---|---|
@@ -26,6 +27,12 @@
 | 12 | **Quest for Business MDM** | `com.oculus.q4b.mdm` | Enterprise Mobile Device Management agent (unused on consumer headsets). |
 | 13 | **Wearable Location Service** | `com.facebook.wearable.system.location.service` | Resident background wearable location tracking service (~110 MB RSS). |
 | 14 | **Wearable Location Proxy** | `com.facebook.wearable.system.location.proxy` | Resident background proxy for Meta wearable location polling (~87 MB RSS). |
+| 15 | **Oculus Lab Service (A/B Experiments)** *(Deep Scan)* | `com.oculus.labservice` | Active background A/B testing & feature-experimentation telemetry daemon (~93 MB PSS). |
+| 16 | **Oculus Enterprise OEM Config** *(Deep Scan)* | `com.oculus.oemconfig` | Enterprise MDM managed-device OEM configuration agent (~107 MB PSS). |
+| 17 | **Meta Pauldron VR QA Automation** *(Deep Scan)* | `com.meta.automation.pauldron.vr` | Internal Meta QA automated test runner agent left in retail firmware. |
+| 18 | **Oculus App Automation Service** *(Deep Scan)* | `com.oculus.appautomation` | Automated UI/app test harness service used for internal QA testing. |
+| 19 | **Android CTS Test Shim** *(Deep Scan)* | `com.android.cts.ctsshim` | Empty Android Compatibility Test Suite (CTS) validation shim. |
+| 20 | **Android Privileged CTS Test Shim** *(Deep Scan)* | `com.android.cts.priv.ctsshim` | Empty privileged Android Compatibility Test Suite (CTS) validation shim. |
 
 ### B. Preinstalled Social Platforms (4 Apps)
 
@@ -36,7 +43,7 @@
 | 3 | **Instagram VR App** | `com.oculus.igvr` | Preinstalled Instagram VR wrapper application. |
 | 4 | **Threads VR App** | `com.oculus.thvr` | Preinstalled Threads social media VR wrapper application. |
 
-### C. Preinstalled Demos, Assistants & Onboarding Bloat (10 Apps & Services)
+### C. Preinstalled Demos, Assistants, Onboarding & Unused Android Phone/TV Stubs (23 Apps & Services)
 
 | # | Friendly Name | Package ID | Purpose / What Turning It Off Stops |
 |---:|---|---|---|
@@ -50,6 +57,19 @@
 | 8 | **Meta Help Center** | `com.oculus.helpcenter` | Meta support articles & troubleshooting viewer (~118 MB cached RSS). |
 | 9 | **VR Privacy Checkup Prompts** | `com.oculus.vrprivacycheckup` | Periodic Meta privacy checkup wizard notifications. |
 | 10 | **Oculus Calendar Panel** | `com.oculus.panelapp.calendar` | Legacy Horizon Home calendar dock widget. |
+| 11 | **Meta NUX Onboarding Daemon** *(Deep Scan)* | `com.meta.environment.prod.nuxd` | New-User Experience (NUX) onboarding daemon not needed after setup. |
+| 12 | **Meta Surface Typing Tutorial (NUX)** *(Deep Scan)* | `com.meta.surfacetypingnux` | Onboarding tutorial prompt for direct-touch surface typing. |
+| 13 | **Meta Hyperscape Room Capture** *(Deep Scan)* | `com.meta.HyperscapeHmdCapture` | Cloud room-photogrammetry capture app (keeps local Guardian intact). |
+| 14 | **Oculus Retail Kiosk Mode Panel** *(Deep Scan)* | `com.oculus.panelapp.kiosk` | Commercial / retail store demo kiosk mode panel. |
+| 15 | **Microsoft Windows App (RDP Stub)** *(Deep Scan)* | `com.microsoft.rdc.androidx` | Preinstalled Microsoft Remote Desktop client stub. |
+| 16 | **Android Work Profile Provisioning** *(Deep Scan)* | `com.android.managedprovisioning` | Corporate BYOD work-profile MDM provisioning wizard (~95 MB PSS). |
+| 17 | **Android TV Live Channels Provider** *(Deep Scan)* | `com.android.providers.tv` | Android TV broadcast tuner database provider unused on VR headsets (~99 MB PSS). |
+| 18 | **Android Calendar Storage Provider** *(Deep Scan)* | `com.android.providers.calendar` | Background calendar database provider that still wakes up in RAM (~99 MB PSS). |
+| 19 | **Android Health Connect Controller** *(Deep Scan)* | `com.android.healthconnect.controller` | Android 14 phone fitness/health data sharing controller UI. |
+| 20 | **Android Health Connect Backup** *(Deep Scan)* | `com.android.health.connect.backuprestore` | Background cloud backup helper for Android Health Connect. |
+| 21 | **Android Legacy Bookmark Provider** *(Deep Scan)* | `com.android.bookmarkprovider` | Obsolete AOSP browser bookmark content provider. |
+| 22 | **Android Call Blocked Number Provider** *(Deep Scan)* | `com.android.providers.blockednumber` | Telephony call/SMS spam blocking database (Quest has no cellular radio). |
+| 23 | **Android Nearby Share Halfsheet** *(Deep Scan)* | `com.android.nearby.halfsheet` | Google Nearby device pairing pop-up sheet stub. |
 
 ---
 
@@ -63,7 +83,7 @@ Quest Debloat/
 ├── README.md                             # Project overview, benchmarks & screenshots
 ├── quest-debloat-selector.html           # Interactive browser script generator
 ├── configs/
-│   ├── packages-catalog.json             # 64-package tiered Horizon OS catalog
+│   ├── packages-catalog.json             # 84-package tiered Horizon OS catalog
 │   └── adguard-meta-telemetry.txt        # Optional AdGuard Home / Pi-hole DNS blocklist
 ├── scripts/
 │   ├── debloat.ps1 / restore.ps1         # Windows PowerShell scripts
@@ -85,9 +105,9 @@ Quest Debloat/
 Double-click `dist\QuestDebloater.exe` to open the interface:
 - **Scan Headset**: Detects your Quest 3, Horizon OS build, battery, free RAM, live per-package RSS memory usage, and enabled/disabled status.
 - **Presets**:
-  - **Safe Recommended (28)** *(already applied to your headset)* — Telemetry, ads, promo upsells, social wrappers, and demo bloat.
-  - **Telemetry & Ads (14)** — Strictly invisible background tracking & promotional services only.
-  - **PCVR / Minimalist (39)** — Adds Social Platform (`com.oculus.socialplatform`), Presence, Avatar Editor, Quest TV, Remote Desktop, Accounts Center, and 4 extra Vista home themes (keeps Haven 2025, Store, Browser, and Virtual Desktop/OpenXR untouched).
+  - **Safe Recommended (47)** *(already applied to your headset)* — Telemetry, ads, promo upsells, QA/enterprise agents, social wrappers, demo bloat, and unused phone/TV stubs.
+  - **Telemetry & Ads (20)** — Strictly invisible background tracking, experimentation, QA automation, & promotional services only.
+  - **PCVR / Minimalist (59)** — Adds Social Platform (`com.oculus.socialplatform`), Presence, Avatar Editor, Quest TV, Remote Desktop, Horizon Media Player (`com.oculus.horizonmediaplayer`), Accounts Center, and 4 extra Vista home themes (keeps Haven 2025, Store, Browser, and Virtual Desktop/OpenXR untouched).
 - **Filter Tabs & Search**: Browse by category (`Telemetry & Ads`, `Social & Horizon`, `Bloat & Demos`, `Environments`, `Caution`, `Protected`, `Disabled Only`) or filter by keyword.
 - **Protected Lock**: Core VR Shell, SystemUX, Guardian, OpenXR, OCMS, and drivers are hard-locked so they cannot be accidentally disabled.
 - **Quest 3 Quick Tweaks Sidebar**:

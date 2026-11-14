@@ -53,11 +53,11 @@ Verified directly over ADB on stock locked Meta Quest 3 firmware (`UP1A.231005.0
 
 | Metric | Before Debloat (`status`) | After `apply --preset safe` |
 | :--- | :--- | :--- |
-| **Safe Tier Packages Disabled** | `0 / 28` | **`28 / 28` Disabled** |
-| **Total Disabled Packages** | `1 / 396` (`com.meta.credentialsmanager`) | **`29 / 396`** |
+| **Safe Tier Packages Disabled** | `0 / 47` | **`47 / 47` Disabled** |
+| **Total Disabled Packages** | `1 / 396` (`com.meta.credentialsmanager`) | **`48 / 396`** |
 | **Protected Core Packages** | `0 / 42` disabled | **`0 / 42` disabled (Locked)** |
 | **VR Home Activity Check** | `com.oculus.vrshell/.HomeActivity` | **`com.oculus.vrshell/.HomeActivity`** |
-| **Background Bloat Targets Stopped** | `0` | **`29` telemetry & bloat services stopped** |
+| **Background Bloat Targets Stopped** | `0` | **`47` telemetry, QA, promo & bloat targets stopped** |
 
 ---
 
@@ -83,10 +83,10 @@ Download [`QuestDebloater-win-x64.zip`](../../releases) (or build from source wi
 # Save a timestamped backup snapshot
 .\dist\QuestDebloater.exe backup
 
-# Apply Safe Recommended preset (28 telemetry, ad, promo & demo packages)
+# Apply Safe Recommended preset (47 telemetry, ad, promo, QA & demo packages)
 .\dist\QuestDebloater.exe apply --preset safe
 
-# Or apply Telemetry & Ads only (14 packages) / PCVR Minimalist (39 packages)
+# Or apply Telemetry & Ads only (20 packages) / PCVR Minimalist (59 packages)
 .\dist\QuestDebloater.exe apply --preset telemetry
 .\dist\QuestDebloater.exe apply --preset pcvr
 
@@ -111,13 +111,13 @@ Open [`quest-debloat-selector.html`](quest-debloat-selector.html) in any browser
 
 ---
 
-## 📦 Curated Package Reference (64 Horizon OS Packages)
+## 📦 Curated Package Reference (84 Horizon OS Packages)
 
-### Tier 1 — `SAFE` (`28` packages — Default Recommended Preset)
-Disables zero-risk advertising, federated learning, background bug uploaders, promotional banners, wearable location polling, and preinstalled social/demo wrappers while keeping the Meta Store, Browser, Link/Air Link, and all VR games working normally.
+### Tier 1 — `SAFE` (`47` packages — Default Recommended Preset)
+Disables zero-risk advertising, federated learning, background bug uploaders, promotional banners, A/B experimentation (`labservice`), enterprise MDM/OEM agents, QA automation, wearable location polling, preinstalled social/demo wrappers, and unused phone/TV stubs while keeping the Meta Store, Browser, Link/Air Link, and all VR games working normally.
 
 <details>
-<summary><strong>1. Telemetry, Advertising & Diagnostics (14 packages — "Telemetry & Ads Only" Preset)</strong></summary>
+<summary><strong>1. Telemetry, Advertising, QA & Enterprise (20 packages — "Telemetry & Ads Only" Preset)</strong></summary>
 
 | Package ID | Component | Purpose & Impact of Disabling |
 | :--- | :--- | :--- |
@@ -135,11 +135,17 @@ Disables zero-risk advertising, federated learning, background bug uploaders, pr
 | `com.oculus.q4b.mdm` | Quest for Business MDM | Disables unused enterprise device management daemon |
 | `com.facebook.wearable.system.location.service` | Wearable Location Service | Stops resident background location tracking (~110 MB RSS) |
 | `com.facebook.wearable.system.location.proxy` | Wearable Location Proxy | Stops background location polling proxy (~87 MB RSS) |
+| `com.oculus.labservice` | Oculus Lab Service | Stops active A/B experimentation telemetry daemon (~93 MB PSS) |
+| `com.oculus.oemconfig` | Oculus Enterprise OEM Config | Disables enterprise OEM configuration agent (~107 MB PSS) |
+| `com.meta.automation.pauldron.vr` | Meta Pauldron QA Automation | Disables internal Meta QA test runner agent |
+| `com.oculus.appautomation` | Oculus App Automation | Disables automated UI test harness service |
+| `com.android.cts.ctsshim` | Android CTS Test Shim | Disables empty Android Compatibility Test Suite validation shim |
+| `com.android.cts.priv.ctsshim` | Privileged CTS Test Shim | Disables empty privileged CTS validation shim |
 
 </details>
 
 <details>
-<summary><strong>2. Social Bloat & Preinstalled Demos (14 additional packages)</strong></summary>
+<summary><strong>2. Social Bloat, Preinstalled Demos & Unused Phone/TV Stubs (27 additional packages)</strong></summary>
 
 | Package ID | Component | Notes |
 | :--- | :--- | :--- |
@@ -157,14 +163,27 @@ Disables zero-risk advertising, federated learning, background bug uploaders, pr
 | `com.oculus.helpcenter` | Meta Help Center | Support article viewer (~118 MB RSS) |
 | `com.oculus.vrprivacycheckup` | VR Privacy Checkup | Periodic privacy wizard nag |
 | `com.oculus.panelapp.calendar` | Oculus Calendar Panel | Legacy Home calendar widget |
+| `com.meta.environment.prod.nuxd` | Meta NUX Onboarding Daemon | New-user onboarding daemon unneeded after setup |
+| `com.meta.surfacetypingnux` | Surface Typing Tutorial | Onboarding direct-touch typing tutorial |
+| `com.meta.HyperscapeHmdCapture` | Hyperscape Room Capture | Cloud photogrammetry capture (keeps Guardian intact) |
+| `com.oculus.panelapp.kiosk` | Retail Kiosk Mode Panel | Commercial store demo kiosk panel |
+| `com.microsoft.rdc.androidx` | Microsoft Windows App | Preinstalled Remote Desktop client stub |
+| `com.android.managedprovisioning` | Work Profile Provisioning | Corporate BYOD MDM provisioning wizard (~95 MB PSS) |
+| `com.android.providers.tv` | Android TV Provider | Unused TV tuner/channel database (~99 MB PSS) |
+| `com.android.providers.calendar` | Calendar Storage Provider | Background calendar DB waking up in RAM (~99 MB PSS) |
+| `com.android.healthconnect.controller` | Health Connect Controller | Phone fitness/health data controller UI |
+| `com.android.health.connect.backuprestore` | Health Connect Backup | Background Health Connect cloud backup helper |
+| `com.android.bookmarkprovider` | Legacy Bookmark Provider | Obsolete AOSP browser bookmark provider |
+| `com.android.providers.blockednumber` | Blocked Number Provider | Phone call-blocking DB (no cellular radio on Quest) |
+| `com.android.nearby.halfsheet` | Nearby Share Halfsheet | Google Nearby device pairing popup stub |
 
 </details>
 
 ---
 
-### Tier 2 — `MODERATE` (`11` additional packages — Included in "PCVR / Minimalist" Preset)
-Ideal if you primarily use **Virtual Desktop**, **ALVR**, or **sideloaded APKs** and do not use Meta Parties, Avatars, Quest TV, or extra 3D Home environments:
-- `com.oculus.socialplatform` (Parties/Friends notifications, ~127 MB RSS), `com.oculus.presence` (Online presence), `com.oculus.avatareditor`, `com.oculus.tv`, `com.oculus.remotedesktop`, `com.oculus.accountscenter`, `com.meta.AccountsCenter.pwa`, and 4 extra Vista environments (`calming`, `focused`, `horror`, `oceanarium` — keeps default `haven2025` intact).
+### Tier 2 — `MODERATE` (`12` additional packages — Included in "PCVR / Minimalist" Preset)
+Ideal if you primarily use **Virtual Desktop**, **ALVR**, or **sideloaded APKs** and do not use Meta Parties, Avatars, Quest TV, Media Player, or extra 3D Home environments:
+- `com.oculus.socialplatform` (Parties/Friends notifications, ~127 MB RSS), `com.oculus.presence` (Online presence), `com.oculus.avatareditor`, `com.oculus.tv`, `com.oculus.remotedesktop`, `com.oculus.horizonmediaplayer` (~125 MB PSS), `com.oculus.accountscenter`, `com.meta.AccountsCenter.pwa`, and 4 extra Vista environments (`calming`, `focused`, `horror`, `oceanarium` — keeps default `haven2025` intact).
 
 ### Tier 3 — `CAUTION` (`8` optional manual toggles)
 Available in the GUI with orange warning badges (never auto-disabled by presets):
