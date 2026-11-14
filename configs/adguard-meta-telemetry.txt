@@ -1,0 +1,26 @@
+# AdGuard Home / Pi-hole DNS Telemetry & Update Block Rules for Meta Quest 3
+# (Companion layer to ADB package debloating)
+#
+# Usage in AdGuard Home:
+#   Filters -> Custom filtering rules -> Paste desired rules below.
+#   To target only your Quest 3, append $client=quest3 after adding it as a persistent client.
+
+||graph.oculus.com^
+||graph.facebook.com^
+||logging.oculus.com^
+||crash.oculus.com^
+||telemetry.oculus.com^
+||metrics.oculus.com^
+||analytics.oculus.com^
+||experiments.oculus.com^
+||scontent.oculuscdn.com^
+||edge-mqtt.facebook.com^
+||mqtt.c10r.facebook.com^
+||an.facebook.com^
+||connect.facebook.net^
+||fbpigeon.com^
+||atmeta.com^
+
+# Optional: Uncomment below to block Meta OTA OS firmware updates as well:
+# ||ota.oculus.com^
+# ||securecdn.oculus.com^

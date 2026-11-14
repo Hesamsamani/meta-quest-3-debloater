@@ -1,0 +1,518 @@
+{
+  "schemaVersion": 1,
+  "deviceTarget": "Meta Quest 3 / 3S / 2 (Horizon OS / Android 14)",
+  "packages": [
+    {
+      "package": "com.meta.horizonadidservice",
+      "name": "Meta Horizon Ad ID Service",
+      "category": "Telemetry & Ads",
+      "tier": "SAFE",
+      "presets": ["telemetry", "safe", "pcvr"],
+      "description": "Meta Horizon advertising identifier tracking and ad attribution service."
+    },
+    {
+      "package": "com.meta.federatedcomputing.oculus",
+      "name": "Meta Federated Computing",
+      "category": "Telemetry & Ads",
+      "tier": "SAFE",
+      "presets": ["telemetry", "safe", "pcvr"],
+      "description": "Background federated machine learning and telemetry model training."
+    },
+    {
+      "package": "com.android.adservices.api",
+      "name": "Android AdServices API",
+      "category": "Telemetry & Ads",
+      "tier": "SAFE",
+      "presets": ["telemetry", "safe", "pcvr"],
+      "description": "Android Privacy Sandbox ad targeting and attribution API."
+    },
+    {
+      "package": "com.android.ext.adservices.api",
+      "name": "Android Extended AdServices",
+      "category": "Telemetry & Ads",
+      "tier": "SAFE",
+      "presets": ["telemetry", "safe", "pcvr"],
+      "description": "Extended Android Privacy Sandbox advertising background service."
+    },
+    {
+      "package": "com.android.ondevicepersonalization.services",
+      "name": "On-Device Ad Personalization",
+      "category": "Telemetry & Ads",
+      "tier": "SAFE",
+      "presets": ["telemetry", "safe", "pcvr"],
+      "description": "On-device behavioral ad personalization engine."
+    },
+    {
+      "package": "com.android.federatedcompute.services",
+      "name": "Android Federated Compute",
+      "category": "Telemetry & Ads",
+      "tier": "SAFE",
+      "presets": ["telemetry", "safe", "pcvr"],
+      "description": "Background Android federated telemetry training daemon."
+    },
+    {
+      "package": "com.oculus.bugreportuploader",
+      "name": "Oculus Bug Report Uploader",
+      "category": "Telemetry & Ads",
+      "tier": "SAFE",
+      "presets": ["telemetry", "safe", "pcvr"],
+      "description": "Background diagnostic dump and crash log uploader to Meta servers."
+    },
+    {
+      "package": "com.oculus.bugreportservice",
+      "name": "Oculus Bug Report Service",
+      "category": "Telemetry & Ads",
+      "tier": "SAFE",
+      "presets": ["telemetry", "safe", "pcvr"],
+      "description": "Background diagnostic capture and bug report collection daemon."
+    },
+    {
+      "package": "com.oculus.quickpromotionservice",
+      "name": "Quick Promotion / Upsells",
+      "category": "Telemetry & Ads",
+      "tier": "SAFE",
+      "presets": ["telemetry", "safe", "pcvr"],
+      "description": "Pushes promotional banners, Horizon+ upsells, and modal prompts in VR."
+    },
+    {
+      "package": "com.oculus.nux.ota",
+      "name": "Post-Update Onboarding Prompts",
+      "category": "Telemetry & Ads",
+      "tier": "SAFE",
+      "presets": ["telemetry", "safe", "pcvr"],
+      "description": "Post-OTA new-user experience onboarding and promotional cards."
+    },
+    {
+      "package": "com.oculus.backuptransportservice",
+      "name": "Meta Cloud Backup Transport",
+      "category": "Telemetry & Ads",
+      "tier": "SAFE",
+      "presets": ["telemetry", "safe", "pcvr"],
+      "description": "Cloud app backup sync transport to Meta servers (ADB backup unaffected)."
+    },
+    {
+      "package": "com.oculus.q4b.mdm",
+      "name": "Quest for Business MDM",
+      "category": "Telemetry & Ads",
+      "tier": "SAFE",
+      "presets": ["telemetry", "safe", "pcvr"],
+      "description": "Enterprise Mobile Device Management agent (unused on consumer headsets)."
+    },
+    {
+      "package": "com.facebook.wearable.system.location.service",
+      "name": "Wearable Location Service",
+      "category": "Telemetry & Ads",
+      "tier": "SAFE",
+      "presets": ["telemetry", "safe", "pcvr"],
+      "description": "Resident background wearable location tracking service (~110 MB RSS)."
+    },
+    {
+      "package": "com.facebook.wearable.system.location.proxy",
+      "name": "Wearable Location Proxy",
+      "category": "Telemetry & Ads",
+      "tier": "SAFE",
+      "presets": ["telemetry", "safe", "pcvr"],
+      "description": "Resident background proxy for Meta wearable location polling (~87 MB RSS)."
+    },
+    {
+      "package": "com.facebook.horizon",
+      "name": "Meta Horizon Worlds",
+      "category": "Social & Horizon",
+      "tier": "SAFE",
+      "presets": ["safe", "pcvr"],
+      "description": "Preinstalled Meta Horizon Worlds client and Horizon Feed integration."
+    },
+    {
+      "package": "com.oculus.facebook",
+      "name": "Facebook VR App",
+      "category": "Social & Horizon",
+      "tier": "SAFE",
+      "presets": ["safe", "pcvr"],
+      "description": "Preinstalled Facebook social VR wrapper application."
+    },
+    {
+      "package": "com.oculus.igvr",
+      "name": "Instagram VR App",
+      "category": "Social & Horizon",
+      "tier": "SAFE",
+      "presets": ["safe", "pcvr"],
+      "description": "Preinstalled Instagram VR wrapper application."
+    },
+    {
+      "package": "com.oculus.thvr",
+      "name": "Threads VR App",
+      "category": "Social & Horizon",
+      "tier": "SAFE",
+      "presets": ["safe", "pcvr"],
+      "description": "Preinstalled Threads social media VR wrapper application."
+    },
+    {
+      "package": "com.facebook.arvr.quillplayer",
+      "name": "Theater Elsewhere / Quill Player",
+      "category": "Bloat & Demos",
+      "tier": "SAFE",
+      "presets": ["safe", "pcvr"],
+      "description": "Preinstalled Quill VR animation viewer and Showcase demos."
+    },
+    {
+      "package": "com.oculus.samples.firsthand",
+      "name": "First Hand Demo",
+      "category": "Bloat & Demos",
+      "tier": "SAFE",
+      "presets": ["safe", "pcvr"],
+      "description": "Preinstalled Meta hand-tracking onboarding demonstration app."
+    },
+    {
+      "package": "com.meta.handseducationmodule",
+      "name": "Hands Education Module",
+      "category": "Bloat & Demos",
+      "tier": "SAFE",
+      "presets": ["safe", "pcvr"],
+      "description": "Interactive tutorial overlay for Quest hand gestures."
+    },
+    {
+      "package": "com.meta.curio.ruler",
+      "name": "Curio Mixed-Reality Ruler",
+      "category": "Bloat & Demos",
+      "tier": "SAFE",
+      "presets": ["safe", "pcvr"],
+      "description": "Preinstalled MR ruler novelty utility."
+    },
+    {
+      "package": "com.meta.curio.toybox",
+      "name": "Curio Mixed-Reality Toybox",
+      "category": "Bloat & Demos",
+      "tier": "SAFE",
+      "presets": ["safe", "pcvr"],
+      "description": "Preinstalled MR toybox novelty mini-app."
+    },
+    {
+      "package": "com.oculus.assistant",
+      "name": "Meta Voice Assistant",
+      "category": "Bloat & Demos",
+      "tier": "SAFE",
+      "presets": ["safe", "pcvr"],
+      "description": "Meta voice command listener and assistant background daemon."
+    },
+    {
+      "package": "com.oculus.guidebook",
+      "name": "Quest Guidebook",
+      "category": "Bloat & Demos",
+      "tier": "SAFE",
+      "presets": ["safe", "pcvr"],
+      "description": "Resident background tips & onboarding guidebook service (~112 MB RSS)."
+    },
+    {
+      "package": "com.oculus.helpcenter",
+      "name": "Meta Help Center",
+      "category": "Bloat & Demos",
+      "tier": "SAFE",
+      "presets": ["safe", "pcvr"],
+      "description": "Meta support articles & troubleshooting viewer (~118 MB cached RSS)."
+    },
+    {
+      "package": "com.oculus.vrprivacycheckup",
+      "name": "VR Privacy Checkup Prompts",
+      "category": "Bloat & Demos",
+      "tier": "SAFE",
+      "presets": ["safe", "pcvr"],
+      "description": "Periodic Meta privacy checkup wizard notifications."
+    },
+    {
+      "package": "com.oculus.panelapp.calendar",
+      "name": "Oculus Calendar Panel",
+      "category": "Bloat & Demos",
+      "tier": "SAFE",
+      "presets": ["safe", "pcvr"],
+      "description": "Legacy Horizon Home calendar dock widget."
+    },
+    {
+      "package": "com.oculus.socialplatform",
+      "name": "Oculus Social Platform",
+      "category": "Social & Horizon",
+      "tier": "MODERATE",
+      "presets": ["pcvr"],
+      "description": "Parties, voice calls, friends status, and social feed notifications (~127 MB RSS)."
+    },
+    {
+      "package": "com.oculus.presence",
+      "name": "Live User Presence Service",
+      "category": "Social & Horizon",
+      "tier": "MODERATE",
+      "presets": ["pcvr"],
+      "description": "Reports active app and online presence state to Meta friends list."
+    },
+    {
+      "package": "com.oculus.avatareditor",
+      "name": "Meta Avatar Editor",
+      "category": "Social & Horizon",
+      "tier": "MODERATE",
+      "presets": ["pcvr"],
+      "description": "3D Meta Avatar customization editor (heavy memory footprint when loaded)."
+    },
+    {
+      "package": "com.oculus.tv",
+      "name": "Meta Quest TV",
+      "category": "Bloat & Demos",
+      "tier": "MODERATE",
+      "presets": ["pcvr"],
+      "description": "Preinstalled Meta Quest TV 180/360 media streaming app."
+    },
+    {
+      "package": "com.oculus.remotedesktop",
+      "name": "Meta Remote Desktop",
+      "category": "Bloat & Demos",
+      "tier": "MODERATE",
+      "presets": ["pcvr"],
+      "description": "Built-in Meta Workrooms remote desktop panel (safe if using Virtual Desktop)."
+    },
+    {
+      "package": "com.oculus.accountscenter",
+      "name": "Meta Accounts Center App",
+      "category": "Social & Horizon",
+      "tier": "MODERATE",
+      "presets": ["pcvr"],
+      "description": "Cross-app Meta/Facebook/Instagram account linking UI."
+    },
+    {
+      "package": "com.meta.AccountsCenter.pwa",
+      "name": "Meta Accounts Center PWA",
+      "category": "Social & Horizon",
+      "tier": "MODERATE",
+      "presets": ["pcvr"],
+      "description": "Web wrapper companion for Meta Accounts Center."
+    },
+    {
+      "package": "com.meta.shell.env.vista.calming",
+      "name": "Home Env: Calming",
+      "category": "Environments",
+      "tier": "MODERATE",
+      "presets": ["pcvr"],
+      "description": "Extra Vista Home virtual environment theme (keeps default Haven 2025 intact)."
+    },
+    {
+      "package": "com.meta.shell.env.vista.focused",
+      "name": "Home Env: Focused",
+      "category": "Environments",
+      "tier": "MODERATE",
+      "presets": ["pcvr"],
+      "description": "Extra Vista Home virtual environment theme (keeps default Haven 2025 intact)."
+    },
+    {
+      "package": "com.meta.shell.env.vista.horror",
+      "name": "Home Env: Horror",
+      "category": "Environments",
+      "tier": "MODERATE",
+      "presets": ["pcvr"],
+      "description": "Extra Vista Home virtual environment theme (keeps default Haven 2025 intact)."
+    },
+    {
+      "package": "com.meta.shell.env.vista.oceanarium",
+      "name": "Home Env: Oceanarium",
+      "category": "Environments",
+      "tier": "MODERATE",
+      "presets": ["pcvr"],
+      "description": "Extra Vista Home virtual environment theme (keeps default Haven 2025 intact)."
+    },
+    {
+      "package": "com.oculus.store",
+      "name": "Meta Horizon Store",
+      "category": "Caution",
+      "tier": "CAUTION",
+      "presets": [],
+      "description": "Official Store UI (~237 MB resident RAM). Only disable if using sideloading/PCVR only."
+    },
+    {
+      "package": "com.oculus.browser",
+      "name": "Meta Quest Browser",
+      "category": "Caution",
+      "tier": "CAUTION",
+      "presets": [],
+      "description": "Default WebXR Chromium browser. Safe to keep unless replaced by another browser."
+    },
+    {
+      "package": "com.oculus.hzosgallery",
+      "name": "Horizon OS Media Gallery",
+      "category": "Caution",
+      "tier": "CAUTION",
+      "presets": [],
+      "description": "Screenshot and spatial video gallery viewer (~120 MB RSS)."
+    },
+    {
+      "package": "com.oculus.magicislandcastingservice",
+      "name": "Meta Native Casting Service",
+      "category": "Caution",
+      "tier": "CAUTION",
+      "presets": [],
+      "description": "Horizon OS native casting daemon (VRmoo uses ADB/scrcpy instead)."
+    },
+    {
+      "package": "com.oculus.xrstreamingclient",
+      "name": "Meta Quest Link / Air Link",
+      "category": "Caution",
+      "tier": "CAUTION",
+      "presets": [],
+      "description": "Official wired Link / wireless Air Link client (safe to disable if using Virtual Desktop / ALVR)."
+    },
+    {
+      "package": "com.meta.pclinkservice.server",
+      "name": "Meta PC Link Server",
+      "category": "Caution",
+      "tier": "CAUTION",
+      "presets": [],
+      "description": "PC Link discovery server companion on the headset."
+    },
+    {
+      "package": "com.oculus.appsafety",
+      "name": "App Safety Integrity Monitor",
+      "category": "Caution",
+      "tier": "CAUTION",
+      "presets": [],
+      "description": "Checks sideloaded/unofficial apps against Meta safety policies (~121 MB RSS)."
+    },
+    {
+      "package": "com.oculus.websafety",
+      "name": "Web Safety Filter",
+      "category": "Caution",
+      "tier": "CAUTION",
+      "presets": [],
+      "description": "URL safety scanner used by Meta Quest Browser links."
+    },
+    {
+      "package": "com.oculus.vrshell",
+      "name": "Horizon OS VR Shell (HOME)",
+      "category": "Protected",
+      "tier": "PROTECTED",
+      "presets": [],
+      "description": "Primary VR launcher & compositor host. Disabling bricks headset UI."
+    },
+    {
+      "package": "com.oculus.systemux",
+      "name": "SystemUX Universal Menu",
+      "category": "Protected",
+      "tier": "PROTECTED",
+      "presets": [],
+      "description": "Core Universal Menu, Quick Settings, dialogs, and overlays."
+    },
+    {
+      "package": "com.oculus.systemdriver",
+      "name": "Oculus System Driver",
+      "category": "Protected",
+      "tier": "PROTECTED",
+      "presets": [],
+      "description": "6DoF headset/controller tracking and core hardware runtime driver."
+    },
+    {
+      "package": "com.oculus.systemactivities",
+      "name": "Oculus System Activities",
+      "category": "Protected",
+      "tier": "PROTECTED",
+      "presets": [],
+      "description": "Core VR permission prompts and power/exit dialogs."
+    },
+    {
+      "package": "com.oculus.systemutilities",
+      "name": "Oculus System Utilities",
+      "category": "Protected",
+      "tier": "PROTECTED",
+      "presets": [],
+      "description": "Low-level Horizon OS system utilities and volume/brightness panels."
+    },
+    {
+      "package": "com.oculus.guardian",
+      "name": "Guardian Boundary Engine",
+      "category": "Protected",
+      "tier": "PROTECTED",
+      "presets": [],
+      "description": "Playspace boundary and passthrough safety guardian system."
+    },
+    {
+      "package": "com.oculus.guardianresources",
+      "name": "Guardian Resources",
+      "category": "Protected",
+      "tier": "PROTECTED",
+      "presets": [],
+      "description": "Assets and shaders for the Guardian safety boundary."
+    },
+    {
+      "package": "com.oculus.guardiansetup",
+      "name": "Guardian Setup UI",
+      "category": "Protected",
+      "tier": "PROTECTED",
+      "presets": [],
+      "description": "Room scan and boundary drawing workflow."
+    },
+    {
+      "package": "com.oculus.ocms",
+      "name": "Oculus Content Management (OCMS)",
+      "category": "Protected",
+      "tier": "PROTECTED",
+      "presets": [],
+      "description": "App library indexing, entitlement verification, and install service."
+    },
+    {
+      "package": "com.oculus.userserver2",
+      "name": "Horizon Multi-User Server",
+      "category": "Protected",
+      "tier": "PROTECTED",
+      "presets": [],
+      "description": "Active Android/Horizon OS user profile session daemon."
+    },
+    {
+      "package": "com.oculus.companion.server",
+      "name": "Meta Horizon Phone Companion",
+      "category": "Protected",
+      "tier": "PROTECTED",
+      "presets": [],
+      "description": "Keeps Developer Mode, pairing, and controller calibration accessible."
+    },
+    {
+      "package": "com.oculus.identitymanagement.service",
+      "name": "Oculus Identity Management",
+      "category": "Protected",
+      "tier": "PROTECTED",
+      "presets": [],
+      "description": "Required by system shell and store-licensed VR games."
+    },
+    {
+      "package": "com.oculus.deviceauthserver",
+      "name": "Device Authentication Server",
+      "category": "Protected",
+      "tier": "PROTECTED",
+      "presets": [],
+      "description": "Hardware device attestation and entitlement token service."
+    },
+    {
+      "package": "com.meta.systemui",
+      "name": "Meta Android SystemUI",
+      "category": "Protected",
+      "tier": "PROTECTED",
+      "presets": [],
+      "description": "Core Android SystemUI status bar, notifications, and ADB RSA prompt."
+    },
+    {
+      "package": "horizonos.platform",
+      "name": "Horizon OS Platform Services",
+      "category": "Protected",
+      "tier": "PROTECTED",
+      "presets": [],
+      "description": "Core Horizon OS SDK runtime platform."
+    },
+    {
+      "package": "horizonos.openxr.runtimebroker",
+      "name": "Horizon OpenXR Runtime Broker",
+      "category": "Protected",
+      "tier": "PROTECTED",
+      "presets": [],
+      "description": "OpenXR runtime broker required by all VR games, Virtual Desktop, and SteamVR."
+    },
+    {
+      "package": "oculus.platform",
+      "name": "Oculus Platform SDK",
+      "category": "Protected",
+      "tier": "PROTECTED",
+      "presets": [],
+      "description": "Shared Oculus platform IPC runtime for installed VR titles."
+    }
+  ]
+}

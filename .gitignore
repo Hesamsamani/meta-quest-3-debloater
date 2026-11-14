@@ -1,0 +1,12 @@
+# Build artifacts
+src/*/bin/
+src/*/obj/
+dist/
+.release/
+*.user
+*.suo
+*.log
+
+# Personal headset backups (keep sanitized schema/example only if desired)
+backups/*.json
+!backups/.gitkeep
