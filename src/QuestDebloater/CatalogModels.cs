@@ -25,6 +25,9 @@ public sealed class CatalogPackage
     [JsonPropertyName("category")]
     public string Category { get; set; } = "";
 
+    [JsonPropertyName("affects")]
+    public string Affects { get; set; } = "";
+
     [JsonPropertyName("tier")]
     public string Tier { get; set; } = "CAUTION";
 

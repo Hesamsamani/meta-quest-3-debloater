@@ -314,16 +314,17 @@ public sealed class MainForm : Form
             SelectionForeColor = TextPrimary
         };
 
-        var colChk = new DataGridViewCheckBoxColumn { Name = "Sel", HeaderText = "", Width = 36, AutoSizeMode = DataGridViewAutoSizeColumnMode.None };
-        var colName = new DataGridViewTextBoxColumn { Name = "Name", HeaderText = "Feature", FillWeight = 18, ReadOnly = true };
-        var colPkg = new DataGridViewTextBoxColumn { Name = "Package", HeaderText = "Package ID", FillWeight = 24, ReadOnly = true };
-        var colCat = new DataGridViewTextBoxColumn { Name = "Category", HeaderText = "Category", FillWeight = 13, ReadOnly = true };
-        var colTier = new DataGridViewTextBoxColumn { Name = "Risk", HeaderText = "Risk Tier", FillWeight = 10, ReadOnly = true };
-        var colStatus = new DataGridViewTextBoxColumn { Name = "Status", HeaderText = "Live Status", FillWeight = 11, ReadOnly = true };
-        var colRam = new DataGridViewTextBoxColumn { Name = "Ram", HeaderText = "RAM", FillWeight = 8, ReadOnly = true };
-        var colDesc = new DataGridViewTextBoxColumn { Name = "Desc", HeaderText = "Description", FillWeight = 34, ReadOnly = true };
+        var colChk = new DataGridViewCheckBoxColumn { Name = "Sel", HeaderText = "", Width = 34, AutoSizeMode = DataGridViewAutoSizeColumnMode.None };
+        var colName = new DataGridViewTextBoxColumn { Name = "Name", HeaderText = "Feature", FillWeight = 16, ReadOnly = true };
+        var colPkg = new DataGridViewTextBoxColumn { Name = "Package", HeaderText = "Package ID", FillWeight = 21, ReadOnly = true };
+        var colCat = new DataGridViewTextBoxColumn { Name = "Category", HeaderText = "Category", FillWeight = 11, ReadOnly = true };
+        var colAffects = new DataGridViewTextBoxColumn { Name = "Affects", HeaderText = "Affects (Part)", FillWeight = 18, ReadOnly = true };
+        var colTier = new DataGridViewTextBoxColumn { Name = "Risk", HeaderText = "Risk Tier", FillWeight = 8, ReadOnly = true };
+        var colStatus = new DataGridViewTextBoxColumn { Name = "Status", HeaderText = "Live Status", FillWeight = 10, ReadOnly = true };
+        var colRam = new DataGridViewTextBoxColumn { Name = "Ram", HeaderText = "RAM", FillWeight = 7, ReadOnly = true };
+        var colDesc = new DataGridViewTextBoxColumn { Name = "Desc", HeaderText = "Description", FillWeight = 27, ReadOnly = true };
 
-        _grid.Columns.AddRange(colChk, colName, colPkg, colCat, colTier, colStatus, colRam, colDesc);
+        _grid.Columns.AddRange(colChk, colName, colPkg, colCat, colAffects, colTier, colStatus, colRam, colDesc);
 
         _grid.CellContentClick += (_, e) =>
         {
@@ -565,6 +566,7 @@ public sealed class MainForm : Form
             if (q.Length == 0) return true;
             return e.Spec.Package.Contains(q, StringComparison.OrdinalIgnoreCase)
                 || e.Spec.Name.Contains(q, StringComparison.OrdinalIgnoreCase)
+                || e.Spec.Affects.Contains(q, StringComparison.OrdinalIgnoreCase)
                 || e.Spec.Description.Contains(q, StringComparison.OrdinalIgnoreCase);
         }).ToList();
 
@@ -577,6 +579,7 @@ public sealed class MainForm : Form
                 e.Spec.Name,
                 e.Spec.Package,
                 e.Spec.Category,
+                e.Spec.Affects,
                 e.Spec.Tier,
                 e.LiveStatus,
                 e.RamMb > 0.1 ? $"{e.RamMb:F0} MB" : "-",

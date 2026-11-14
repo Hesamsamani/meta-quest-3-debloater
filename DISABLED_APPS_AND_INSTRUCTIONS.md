@@ -7,69 +7,79 @@
 
 ---
 
+## 0. Total Measured Resource Savings (Start to Finish)
+
+| Resource | Measured Gain / Impact on `2G0YC5ZH0L0126` | How It Breaks Down |
+| :--- | :--- | :--- |
+| **RAM Freed** | **~900 MB+ resident/cached processes eliminated** (`+292 MB` net available RAM jump & `+813 MB` kill delta on the second pass) | **Batch 1 (measured resident RSS):** Wearable Location Service (`~110 MB`), Location Proxy (`~87 MB`), Guidebook (`~112 MB`), Help Center (`~118 MB`).<br>**Batch 2 (measured live right before disabling):** `labservice` (`97.3 MB` RSS / `~93 MB` PSS), `oemconfig` (`117.4 MB` RSS / `~107 MB` PSS), `managedprovisioning` (`~95 MB` PSS), `providers.tv` (`~99 MB` PSS), `providers.calendar` (`~99 MB` PSS). |
+| **CPU / Background Wakeups** | **`574% idle / 600%`** (~95.7% idle asleep) • **`334% idle / 600%`** with VR Shell active at **72/73 FPS** | Eliminates periodic background CPU wakeups from ad SDKs, federated ML training, crash uploaders, lab experiments, enterprise MDM, QA automation, voice trigger polling, and Android TV/Calendar syncs. |
+| **Hard Disk / Storage** | **`0 MB` deleted right now** (`439G / 449G` • `9.3 GB` free) — **`2.51 GiB` (`/data/app`) reclaimable** if uninstalled | Because `pm disable-user` preserves APKs for instant 1-click restore, disk usage does not drop until uninstalled:<br>• **10 removable `/data/app` bloat apps:** `1,660,252 KB` (`~1.58 GiB`) — can be reclaimed with `pm uninstall <pkg>`.<br>• **5 OTA-updated system apps in `/data/app`:** `969,316 KB` (`~947 MiB`, e.g., Horizon Worlds `621 MiB`, Hyperscape `185 MiB`) — updates removable via `pm uninstall-system-updates <pkg>`.<br>• **32 read-only ROM packages:** `104,512 KB` (`~102 MiB`) on immutable `/system`, `/product`, `/apex` partitions. |
+
+---
+
 ## 1. Complete List of Apps & Services Turned Off (47 Packages)
 
 ### A. Telemetry, Advertising, QA Automation & Enterprise Services (20 Background Services)
 
-| # | Friendly Name | Package ID | Purpose / What Turning It Off Stops |
-|---:|---|---|---|
-| 1 | **Meta Horizon Ad ID Service** | `com.meta.horizonadidservice` | Meta Horizon advertising identifier tracking and ad attribution service. |
-| 2 | **Meta Federated Computing** | `com.meta.federatedcomputing.oculus` | Background federated machine learning and telemetry model training. |
-| 3 | **Android AdServices API** | `com.android.adservices.api` | Android Privacy Sandbox ad targeting and attribution API. |
-| 4 | **Android Extended AdServices** | `com.android.ext.adservices.api` | Extended Android Privacy Sandbox advertising background service. |
-| 5 | **On-Device Ad Personalization** | `com.android.ondevicepersonalization.services` | On-device behavioral ad personalization engine. |
-| 6 | **Android Federated Compute** | `com.android.federatedcompute.services` | Background Android federated telemetry training daemon. |
-| 7 | **Oculus Bug Report Uploader** | `com.oculus.bugreportuploader` | Background diagnostic dump and crash log uploader to Meta servers. |
-| 8 | **Oculus Bug Report Service** | `com.oculus.bugreportservice` | Background diagnostic capture and bug report collection daemon. |
-| 9 | **Quick Promotion / Upsells** | `com.oculus.quickpromotionservice` | Pushes promotional banners, Horizon+ upsells, and modal prompts in VR. |
-| 10 | **Post-Update Onboarding Prompts** | `com.oculus.nux.ota` | Post-OTA new-user experience onboarding and promotional cards. |
-| 11 | **Meta Cloud Backup Transport** | `com.oculus.backuptransportservice` | Cloud app backup sync transport to Meta servers (ADB backup unaffected). |
-| 12 | **Quest for Business MDM** | `com.oculus.q4b.mdm` | Enterprise Mobile Device Management agent (unused on consumer headsets). |
-| 13 | **Wearable Location Service** | `com.facebook.wearable.system.location.service` | Resident background wearable location tracking service (~110 MB RSS). |
-| 14 | **Wearable Location Proxy** | `com.facebook.wearable.system.location.proxy` | Resident background proxy for Meta wearable location polling (~87 MB RSS). |
-| 15 | **Oculus Lab Service (A/B Experiments)** *(Deep Scan)* | `com.oculus.labservice` | Active background A/B testing & feature-experimentation telemetry daemon (~93 MB PSS). |
-| 16 | **Oculus Enterprise OEM Config** *(Deep Scan)* | `com.oculus.oemconfig` | Enterprise MDM managed-device OEM configuration agent (~107 MB PSS). |
-| 17 | **Meta Pauldron VR QA Automation** *(Deep Scan)* | `com.meta.automation.pauldron.vr` | Internal Meta QA automated test runner agent left in retail firmware. |
-| 18 | **Oculus App Automation Service** *(Deep Scan)* | `com.oculus.appautomation` | Automated UI/app test harness service used for internal QA testing. |
-| 19 | **Android CTS Test Shim** *(Deep Scan)* | `com.android.cts.ctsshim` | Empty Android Compatibility Test Suite (CTS) validation shim. |
-| 20 | **Android Privileged CTS Test Shim** *(Deep Scan)* | `com.android.cts.priv.ctsshim` | Empty privileged Android Compatibility Test Suite (CTS) validation shim. |
+| # | Friendly Name | Package ID | Affects (UAD Subsystem) | Measured RAM / APK Disk Footprint | Purpose / What Turning It Off Stops |
+|---:|---|---|---|---|---|
+| 1 | **Meta Horizon Ad ID Service** | `com.meta.horizonadidservice` | Ad Tracking & Personalized Ad ID | Background service • `364 KB` ROM | Stops Horizon advertising identifier tracking and ad attribution. |
+| 2 | **Meta Federated Computing** | `com.meta.federatedcomputing.oculus` | Background ML Telemetry & CPU | Background ML CPU • `8 KB` ROM | Stops background federated machine learning & telemetry model training. |
+| 3 | **Android AdServices API** | `com.android.adservices.api` | Android Privacy Sandbox Ad API | Background daemon • `15.6 MiB` APEX | Stops Android Privacy Sandbox ad targeting & attribution API. |
+| 4 | **Android Extended AdServices** | `com.android.ext.adservices.api` | Extended Ad Attribution Service | Background daemon • `12.7 MiB` APEX | Stops extended Android ad attribution background daemon. |
+| 5 | **On-Device Ad Personalization** | `com.android.ondevicepersonalization.services` | On-Device Behavioral Ad Profiling | Background CPU/RAM • `1.8 MiB` APEX | Stops on-device behavioral ad personalization engine. |
+| 6 | **Android Federated Compute** | `com.android.federatedcompute.services` | Android Federated ML Telemetry | Background ML CPU • `88 KB` APEX | Stops background Android federated telemetry training daemon. |
+| 7 | **Oculus Bug Report Uploader** | `com.oculus.bugreportuploader` | Crash / Diagnostic Uploader | Background network • `964 KB` ROM | Stops background diagnostic dump & crash log uploads to Meta servers. |
+| 8 | **Oculus Bug Report Service** | `com.oculus.bugreportservice` | Background Bug Capture Daemon | Background daemon • `936 KB` ROM | Stops idle diagnostic capture & bug report collection daemon. |
+| 9 | **Quick Promotion / Upsells** | `com.oculus.quickpromotionservice` | VR Home Upsells & Promo Nags | Background daemon • `2.0 MiB` ROM | Eliminates in-VR Horizon+ banners, store upsells, and promo popups. |
+| 10 | **Post-Update Onboarding Prompts** | `com.oculus.nux.ota` | Post-Update Promo Cards | Triggered after OTA • `356 KB` ROM | Stops post-update promotional cards & onboarding wizards. |
+| 11 | **Meta Cloud Backup Transport** | `com.oculus.backuptransportservice` | Meta Cloud Backup Sync | Background sync • `24.1 MiB` ROM | Stops cloud app backup transport to Meta servers (ADB backups unaffected). |
+| 12 | **Quest for Business MDM** | `com.oculus.q4b.mdm` | Quest Enterprise MDM Agent | Unused enterprise stub • `16 KB` ROM | Disables enterprise Mobile Device Management agent on consumer headsets. |
+| 13 | **Wearable Location Service** | `com.facebook.wearable.system.location.service` | Wearable Location Polling & RAM | **`~110 MB` resident RSS** • `7.0 MiB` ROM | Stops resident background wearable location tracking daemon. |
+| 14 | **Wearable Location Proxy** | `com.facebook.wearable.system.location.proxy` | Location Proxy Background RAM | **`~87 MB` resident RSS** • `56 KB` ROM | Stops resident background proxy for wearable location polling. |
+| 15 | **Oculus Lab Service (A/B Experiments)** *(Deep Scan)* | `com.oculus.labservice` | A/B Experiments Telemetry & RAM | **`97.3 MB` RSS (`~93 MB` PSS)** • `36 KB` ROM | Stops active background A/B experiment polling & telemetry flags. |
+| 16 | **Oculus Enterprise OEM Config** *(Deep Scan)* | `com.oculus.oemconfig` | Enterprise OEM Provisioning & RAM | **`117.4 MB` RSS (`~107 MB` PSS)** • `12.1 MiB` ROM | Stops enterprise MDM managed-device OEM configuration agent. |
+| 17 | **Meta Pauldron VR QA Automation** *(Deep Scan)* | `com.meta.automation.pauldron.vr` | Internal Meta QA Test Automation | Unused QA stub • `12 KB` ROM | Disables internal Meta QA automated test runner agent. |
+| 18 | **Oculus App Automation Service** *(Deep Scan)* | `com.oculus.appautomation` | UI / App Test Automation Harness | Unused QA stub • `524 KB` ROM | Disables automated UI/app test harness service. |
+| 19 | **Android CTS Test Shim** *(Deep Scan)* | `com.android.cts.ctsshim` | Android CTS Compliance Test Stub | Empty test shim • `12 KB` APEX | Disables empty Android Compatibility Test Suite validation shim. |
+| 20 | **Android Privileged CTS Test Shim** *(Deep Scan)* | `com.android.cts.priv.ctsshim` | Privileged CTS Compliance Stub | Empty test shim • `36 KB` APEX | Disables empty privileged Android CTS validation shim. |
 
 ### B. Preinstalled Social Platforms (4 Apps)
 
-| # | Friendly Name | Package ID | Purpose / What Turning It Off Stops |
-|---:|---|---|---|
-| 1 | **Meta Horizon Worlds** | `com.facebook.horizon` | Preinstalled Meta Horizon Worlds client and Horizon Feed integration. |
-| 2 | **Facebook VR App** | `com.oculus.facebook` | Preinstalled Facebook social VR wrapper application. |
-| 3 | **Instagram VR App** | `com.oculus.igvr` | Preinstalled Instagram VR wrapper application. |
-| 4 | **Threads VR App** | `com.oculus.thvr` | Preinstalled Threads social media VR wrapper application. |
+| # | Friendly Name | Package ID | Affects (UAD Subsystem) | Measured RAM / APK Disk Footprint | Purpose / What Turning It Off Stops |
+|---:|---|---|---|---|---|
+| 1 | **Meta Horizon Worlds** | `com.facebook.horizon` | Horizon Worlds App & Feed | Heavy on launch • **`620.7 MiB` on `/data/app`** (`UPDATED_SYSTEM_APP`) | Hides preinstalled Meta Horizon Worlds client & Horizon Feed triggers. |
+| 2 | **Facebook VR App** | `com.oculus.facebook` | Facebook Social VR App | Heavy on launch • **`150.7 MiB` on `/data/app`** (Removable) | Disables preinstalled Facebook social VR wrapper application. |
+| 3 | **Instagram VR App** | `com.oculus.igvr` | Instagram Social VR App | Heavy on launch • **`271.8 MiB` on `/data/app`** (Removable) | Disables preinstalled Instagram VR wrapper application. |
+| 4 | **Threads VR App** | `com.oculus.thvr` | Threads Social VR App | On launch • **`19.1 MiB` on `/data/app`** (Removable) | Disables preinstalled Threads social media VR wrapper application. |
 
 ### C. Preinstalled Demos, Assistants, Onboarding & Unused Android Phone/TV Stubs (23 Apps & Services)
 
-| # | Friendly Name | Package ID | Purpose / What Turning It Off Stops |
-|---:|---|---|---|
-| 1 | **Theater Elsewhere / Quill Player** | `com.facebook.arvr.quillplayer` | Preinstalled Quill VR animation viewer and Showcase demos. |
-| 2 | **First Hand Demo** | `com.oculus.samples.firsthand` | Preinstalled Meta hand-tracking onboarding demonstration app. |
-| 3 | **Hands Education Module** | `com.meta.handseducationmodule` | Interactive tutorial overlay for Quest hand gestures. |
-| 4 | **Curio Mixed-Reality Ruler** | `com.meta.curio.ruler` | Preinstalled MR ruler novelty utility. |
-| 5 | **Curio Mixed-Reality Toybox** | `com.meta.curio.toybox` | Preinstalled MR toybox novelty mini-app. |
-| 6 | **Meta Voice Assistant** | `com.oculus.assistant` | Meta voice command listener and assistant background daemon. |
-| 7 | **Quest Guidebook** | `com.oculus.guidebook` | Resident background tips & onboarding guidebook service (~112 MB RSS). |
-| 8 | **Meta Help Center** | `com.oculus.helpcenter` | Meta support articles & troubleshooting viewer (~118 MB cached RSS). |
-| 9 | **VR Privacy Checkup Prompts** | `com.oculus.vrprivacycheckup` | Periodic Meta privacy checkup wizard notifications. |
-| 10 | **Oculus Calendar Panel** | `com.oculus.panelapp.calendar` | Legacy Horizon Home calendar dock widget. |
-| 11 | **Meta NUX Onboarding Daemon** *(Deep Scan)* | `com.meta.environment.prod.nuxd` | New-User Experience (NUX) onboarding daemon not needed after setup. |
-| 12 | **Meta Surface Typing Tutorial (NUX)** *(Deep Scan)* | `com.meta.surfacetypingnux` | Onboarding tutorial prompt for direct-touch surface typing. |
-| 13 | **Meta Hyperscape Room Capture** *(Deep Scan)* | `com.meta.HyperscapeHmdCapture` | Cloud room-photogrammetry capture app (keeps local Guardian intact). |
-| 14 | **Oculus Retail Kiosk Mode Panel** *(Deep Scan)* | `com.oculus.panelapp.kiosk` | Commercial / retail store demo kiosk mode panel. |
-| 15 | **Microsoft Windows App (RDP Stub)** *(Deep Scan)* | `com.microsoft.rdc.androidx` | Preinstalled Microsoft Remote Desktop client stub. |
-| 16 | **Android Work Profile Provisioning** *(Deep Scan)* | `com.android.managedprovisioning` | Corporate BYOD work-profile MDM provisioning wizard (~95 MB PSS). |
-| 17 | **Android TV Live Channels Provider** *(Deep Scan)* | `com.android.providers.tv` | Android TV broadcast tuner database provider unused on VR headsets (~99 MB PSS). |
-| 18 | **Android Calendar Storage Provider** *(Deep Scan)* | `com.android.providers.calendar` | Background calendar database provider that still wakes up in RAM (~99 MB PSS). |
-| 19 | **Android Health Connect Controller** *(Deep Scan)* | `com.android.healthconnect.controller` | Android 14 phone fitness/health data sharing controller UI. |
-| 20 | **Android Health Connect Backup** *(Deep Scan)* | `com.android.health.connect.backuprestore` | Background cloud backup helper for Android Health Connect. |
-| 21 | **Android Legacy Bookmark Provider** *(Deep Scan)* | `com.android.bookmarkprovider` | Obsolete AOSP browser bookmark content provider. |
-| 22 | **Android Call Blocked Number Provider** *(Deep Scan)* | `com.android.providers.blockednumber` | Telephony call/SMS spam blocking database (Quest has no cellular radio). |
-| 23 | **Android Nearby Share Halfsheet** *(Deep Scan)* | `com.android.nearby.halfsheet` | Google Nearby device pairing pop-up sheet stub. |
+| # | Friendly Name | Package ID | Affects (UAD Subsystem) | Measured RAM / APK Disk Footprint | Purpose / What Turning It Off Stops |
+|---:|---|---|---|---|---|
+| 1 | **Theater Elsewhere / Quill Player** | `com.facebook.arvr.quillplayer` | Theater Elsewhere Demo | On launch • **`25.6 MiB` on `/data/app`** (Removable) | Disables preinstalled Quill VR animation viewer & Showcase demos. |
+| 2 | **First Hand Demo** | `com.oculus.samples.firsthand` | First Hand Tracking Demo | On launch • **`568.8 MiB` on `/data/app`** (Removable) | Disables preinstalled hand-tracking onboarding demonstration app. |
+| 3 | **Hands Education Module** | `com.meta.handseducationmodule` | Hand Gesture Tutorial Overlay | On launch • **`174.6 MiB` on `/data/app`** (Removable) | Disables interactive tutorial overlay for Quest hand gestures. |
+| 4 | **Curio Mixed-Reality Ruler** | `com.meta.curio.ruler` | MR Ruler Novelty Utility | On launch • **`70.0 MiB` on `/data/app`** (Removable) | Disables preinstalled MR ruler novelty utility. |
+| 5 | **Curio Mixed-Reality Toybox** | `com.meta.curio.toybox` | MR Toybox Novelty Demo | On launch • **`310.8 MiB` on `/data/app`** (Removable) | Disables preinstalled MR toybox novelty mini-app. |
+| 6 | **Meta Voice Assistant** | `com.oculus.assistant` | Voice Trigger & Mic Listener | Background wakeups • `40 KB` ROM | Stops Meta voice command listener & assistant background daemon. |
+| 7 | **Quest Guidebook** | `com.oculus.guidebook` | Guidebook Tips Background Service | **`~112 MB` resident RSS** • **`39.0 MiB` on `/data/app`** (`UPDATED_SYSTEM_APP`) | Stops resident background tips & onboarding guidebook service. |
+| 8 | **Meta Help Center** | `com.oculus.helpcenter` | Meta Help Viewer Service | **`~118 MB` cached RSS** • **`14.0 MiB` on `/data/app`** (Removable) | Stops preinstalled support articles & troubleshooting viewer. |
+| 9 | **VR Privacy Checkup Prompts** | `com.oculus.vrprivacycheckup` | Periodic Privacy Nags | Background prompts • **`16.0 MiB` on `/data/app`** (Removable) | Stops periodic Meta privacy checkup wizard notifications. |
+| 10 | **Oculus Calendar Panel** | `com.oculus.panelapp.calendar` | Legacy Home Calendar Widget | Panel service • **`11.5 MiB` on `/data/app`** (`UPDATED_SYSTEM_APP`) | Disables legacy Horizon Home calendar dock widget. |
+| 11 | **Meta NUX Onboarding Daemon** *(Deep Scan)* | `com.meta.environment.prod.nuxd` | New-User Setup Daemon | Background NUX • `6.9 MiB` ROM | Stops New-User Experience (NUX) onboarding daemon after setup. |
+| 12 | **Meta Surface Typing Tutorial (NUX)** *(Deep Scan)* | `com.meta.surfacetypingnux` | Direct-Touch Typing Tutorial | Onboarding prompt • `1.2 MiB` ROM | Stops direct-touch surface typing onboarding prompt. |
+| 13 | **Meta Hyperscape Room Capture** *(Deep Scan)* | `com.meta.HyperscapeHmdCapture` | Cloud Room Photogrammetry | App only (**Guardian OK**) • **`184.9 MiB` on `/data/app`** (`UPDATED_SYSTEM_APP`) | Disables cloud room-photogrammetry capture app without affecting Guardian. |
+| 14 | **Oculus Retail Kiosk Mode Panel** *(Deep Scan)* | `com.oculus.panelapp.kiosk` | Retail Store Demo Kiosk | Unused kiosk stub • `20 KB` ROM | Disables commercial/retail store demo kiosk mode panel. |
+| 15 | **Microsoft Windows App (RDP Stub)** *(Deep Scan)* | `com.microsoft.rdc.androidx` | Microsoft Remote Desktop Client | App only • **`90.5 MiB` on `/data/app`** (`UPDATED_SYSTEM_APP`) | Disables preinstalled Microsoft Remote Desktop client stub. |
+| 16 | **Android Work Profile Provisioning** *(Deep Scan)* | `com.android.managedprovisioning` | Corporate Work Profile MDM | **`~95 MB` cached PSS** • `5.6 MiB` ROM | Stops corporate BYOD work-profile provisioning wizard in RAM. |
+| 17 | **Android TV Live Channels Provider** *(Deep Scan)* | `com.android.providers.tv` | Unused Android TV Tuner DB | **`~99 MB` cached PSS** • `104 KB` ROM | Stops unused Android TV broadcast tuner database waking in RAM. |
+| 18 | **Android Calendar Storage Provider** *(Deep Scan)* | `com.android.providers.calendar` | Android Calendar Sync DB | **`~99 MB` cached PSS** • `244 KB` ROM | Stops background calendar storage provider waking in RAM. |
+| 19 | **Android Health Connect Controller** *(Deep Scan)* | `com.android.healthconnect.controller` | Phone Health Connect UI | Unused phone health UI • `6.1 MiB` APEX | Disables Android 14 phone fitness/health data sharing controller. |
+| 20 | **Android Health Connect Backup** *(Deep Scan)* | `com.android.health.connect.backuprestore` | Phone Health Connect Backup | Unused cloud sync • `20 KB` APEX | Disables background cloud backup helper for Health Connect. |
+| 21 | **Android Legacy Bookmark Provider** *(Deep Scan)* | `com.android.bookmarkprovider` | Legacy AOSP Bookmark DB | Unused DB stub • `28 KB` ROM | Disables obsolete AOSP browser bookmark content provider. |
+| 22 | **Android Call Blocked Number Provider** *(Deep Scan)* | `com.android.providers.blockednumber` | Phone Call-Blocking DB | Unused telephony DB • `44 KB` ROM | Disables cellular call/SMS blocking database (Quest has no cellular radio). |
+| 23 | **Android Nearby Share Halfsheet** *(Deep Scan)* | `com.android.nearby.halfsheet` | Nearby Share Pop-up Stub | Unused Android phone UI • `3.2 MiB` APEX | Disables Google Nearby device pairing pop-up sheet stub. |
 
 ---
 

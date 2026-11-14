@@ -57,7 +57,9 @@ Verified directly over ADB on stock locked Meta Quest 3 firmware (`UP1A.231005.0
 | **Total Disabled Packages** | `1 / 396` (`com.meta.credentialsmanager`) | **`48 / 396`** |
 | **Protected Core Packages** | `0 / 42` disabled | **`0 / 42` disabled (Locked)** |
 | **VR Home Activity Check** | `com.oculus.vrshell/.HomeActivity` | **`com.oculus.vrshell/.HomeActivity`** |
-| **Background Bloat Targets Stopped** | `0` | **`47` telemetry, QA, promo & bloat targets stopped** |
+| **RAM Relieved (Resident & Cached Bloat)** | 9 resident/cached daemons (`~900 MB+`) | **`0` active telemetry/bloat daemons** (`+292 MB` net / `+813 MB` kill delta on Pass 2) |
+| **CPU Headroom** | Periodic ad / ML / location / calendar wakeups | **`574% idle / 600%`** asleep • **`334% idle`** in VR Shell at 72 FPS |
+| **Storage (`/data/app` Reclaimable)** | `439G / 449G` (`9.3 GB` free) | **`0 MB` deleted** (reversible disable) • **`2.51 GiB`** reclaimable via optional uninstall |
 
 ---
 
@@ -119,63 +121,63 @@ Disables zero-risk advertising, federated learning, background bug uploaders, pr
 <details>
 <summary><strong>1. Telemetry, Advertising, QA & Enterprise (20 packages — "Telemetry & Ads Only" Preset)</strong></summary>
 
-| Package ID | Component | Purpose & Impact of Disabling |
-| :--- | :--- | :--- |
-| `com.meta.horizonadidservice` | Meta Horizon Ad ID Service | Stops Horizon advertising ID tracking & ad attribution |
-| `com.meta.federatedcomputing.oculus` | Meta Federated Computing | Stops background ML training & telemetry harvesting |
-| `com.android.adservices.api` | Android AdServices API | Disables Privacy Sandbox ad targeting API |
-| `com.android.ext.adservices.api` | Extended AdServices API | Disables extended Android ad attribution background daemon |
-| `com.android.ondevicepersonalization.services` | On-Device Personalization | Disables behavioral ad profiling engine |
-| `com.android.federatedcompute.services` | Android Federated Compute | Stops background Android federated compute telemetry |
-| `com.oculus.bugreportuploader` | Bug Report Uploader | Prevents background diagnostic & crash uploads to Meta |
-| `com.oculus.bugreportservice` | Bug Report Service | Stops idle bug report collection daemon |
-| `com.oculus.quickpromotionservice` | Quick Promotion / Upsells | Eliminates in-VR Horizon+ banners & promotional popups |
-| `com.oculus.nux.ota` | Post-OTA Onboarding Nags | Stops post-update promotional cards & wizards |
-| `com.oculus.backuptransportservice` | Meta Cloud Backup Transport | Stops background cloud sync telemetry (ADB backups unaffected) |
-| `com.oculus.q4b.mdm` | Quest for Business MDM | Disables unused enterprise device management daemon |
-| `com.facebook.wearable.system.location.service` | Wearable Location Service | Stops resident background location tracking (~110 MB RSS) |
-| `com.facebook.wearable.system.location.proxy` | Wearable Location Proxy | Stops background location polling proxy (~87 MB RSS) |
-| `com.oculus.labservice` | Oculus Lab Service | Stops active A/B experimentation telemetry daemon (~93 MB PSS) |
-| `com.oculus.oemconfig` | Oculus Enterprise OEM Config | Disables enterprise OEM configuration agent (~107 MB PSS) |
-| `com.meta.automation.pauldron.vr` | Meta Pauldron QA Automation | Disables internal Meta QA test runner agent |
-| `com.oculus.appautomation` | Oculus App Automation | Disables automated UI test harness service |
-| `com.android.cts.ctsshim` | Android CTS Test Shim | Disables empty Android Compatibility Test Suite validation shim |
-| `com.android.cts.priv.ctsshim` | Privileged CTS Test Shim | Disables empty privileged CTS validation shim |
+| Package ID | Component | Affects (UAD Subsystem) | Purpose & Measured Impact |
+| :--- | :--- | :--- | :--- |
+| `com.meta.horizonadidservice` | Meta Horizon Ad ID Service | Ad Tracking & Personalized Ad ID | Stops Horizon advertising ID tracking & ad attribution |
+| `com.meta.federatedcomputing.oculus` | Meta Federated Computing | Background ML Telemetry & CPU | Stops background ML training & telemetry harvesting |
+| `com.android.adservices.api` | Android AdServices API | Android Privacy Sandbox Ad API | Disables Privacy Sandbox ad targeting API (`15.6 MiB` APEX) |
+| `com.android.ext.adservices.api` | Extended AdServices API | Extended Ad Attribution Service | Disables extended Android ad attribution daemon (`12.7 MiB` APEX) |
+| `com.android.ondevicepersonalization.services` | On-Device Personalization | On-Device Behavioral Ad Profiling | Disables behavioral ad profiling engine |
+| `com.android.federatedcompute.services` | Android Federated Compute | Android Federated ML Telemetry | Stops background Android federated compute telemetry |
+| `com.oculus.bugreportuploader` | Bug Report Uploader | Crash / Diagnostic Uploader | Prevents background diagnostic & crash uploads to Meta |
+| `com.oculus.bugreportservice` | Bug Report Service | Background Bug Capture Daemon | Stops idle bug report collection daemon |
+| `com.oculus.quickpromotionservice` | Quick Promotion / Upsells | VR Home Upsells & Promo Nags | Eliminates in-VR Horizon+ banners & promotional popups |
+| `com.oculus.nux.ota` | Post-Update Onboarding Nags | Post-Update Promo Cards | Stops post-update promotional cards & wizards |
+| `com.oculus.backuptransportservice` | Meta Cloud Backup Transport | Meta Cloud Backup Sync | Stops cloud sync telemetry (`24.1 MiB` ROM; ADB unaffected) |
+| `com.oculus.q4b.mdm` | Quest for Business MDM | Quest Enterprise MDM Agent | Disables unused enterprise device management daemon |
+| `com.facebook.wearable.system.location.service` | Wearable Location Service | Wearable Location Polling & RAM | Stops resident background location tracking (`~110 MB` RSS) |
+| `com.facebook.wearable.system.location.proxy` | Wearable Location Proxy | Location Proxy Background RAM | Stops background location polling proxy (`~87 MB` RSS) |
+| `com.oculus.labservice` | Oculus Lab Service | A/B Experiments Telemetry & RAM | Stops active A/B experimentation telemetry daemon (`~93 MB` PSS) |
+| `com.oculus.oemconfig` | Oculus Enterprise OEM Config | Enterprise OEM Provisioning & RAM | Disables enterprise OEM configuration agent (`~107 MB` PSS) |
+| `com.meta.automation.pauldron.vr` | Meta Pauldron QA Automation | Internal Meta QA Test Automation | Disables internal Meta QA test runner agent |
+| `com.oculus.appautomation` | Oculus App Automation | UI / App Test Automation Harness | Disables automated UI test harness service |
+| `com.android.cts.ctsshim` | Android CTS Test Shim | Android CTS Compliance Test Stub | Disables empty Android Compatibility Test Suite validation shim |
+| `com.android.cts.priv.ctsshim` | Privileged CTS Test Shim | Privileged CTS Compliance Stub | Disables empty privileged CTS validation shim |
 
 </details>
 
 <details>
 <summary><strong>2. Social Bloat, Preinstalled Demos & Unused Phone/TV Stubs (27 additional packages)</strong></summary>
 
-| Package ID | Component | Notes |
-| :--- | :--- | :--- |
-| `com.facebook.horizon` | Meta Horizon Worlds | Removes Horizon Worlds & feed clutter |
-| `com.oculus.facebook` | Facebook VR App | Preinstalled Facebook wrapper |
-| `com.oculus.igvr` | Instagram VR App | Preinstalled Instagram wrapper |
-| `com.oculus.thvr` | Threads VR App | Preinstalled Threads wrapper |
-| `com.facebook.arvr.quillplayer` | Theater Elsewhere / Quill | Preinstalled showcase player |
-| `com.oculus.samples.firsthand` | First Hand Demo | Preinstalled hand tracking demo |
-| `com.meta.handseducationmodule` | Hands Education Module | Interactive gesture onboarding overlay |
-| `com.meta.curio.ruler` | Curio MR Ruler | Preinstalled MR novelty app |
-| `com.meta.curio.toybox` | Curio MR Toybox | Preinstalled MR novelty app |
-| `com.oculus.assistant` | Meta Voice Assistant | Background voice trigger listener |
-| `com.oculus.guidebook` | Quest Guidebook | Resident onboarding tips service (~112 MB RSS) |
-| `com.oculus.helpcenter` | Meta Help Center | Support article viewer (~118 MB RSS) |
-| `com.oculus.vrprivacycheckup` | VR Privacy Checkup | Periodic privacy wizard nag |
-| `com.oculus.panelapp.calendar` | Oculus Calendar Panel | Legacy Home calendar widget |
-| `com.meta.environment.prod.nuxd` | Meta NUX Onboarding Daemon | New-user onboarding daemon unneeded after setup |
-| `com.meta.surfacetypingnux` | Surface Typing Tutorial | Onboarding direct-touch typing tutorial |
-| `com.meta.HyperscapeHmdCapture` | Hyperscape Room Capture | Cloud photogrammetry capture (keeps Guardian intact) |
-| `com.oculus.panelapp.kiosk` | Retail Kiosk Mode Panel | Commercial store demo kiosk panel |
-| `com.microsoft.rdc.androidx` | Microsoft Windows App | Preinstalled Remote Desktop client stub |
-| `com.android.managedprovisioning` | Work Profile Provisioning | Corporate BYOD MDM provisioning wizard (~95 MB PSS) |
-| `com.android.providers.tv` | Android TV Provider | Unused TV tuner/channel database (~99 MB PSS) |
-| `com.android.providers.calendar` | Calendar Storage Provider | Background calendar DB waking up in RAM (~99 MB PSS) |
-| `com.android.healthconnect.controller` | Health Connect Controller | Phone fitness/health data controller UI |
-| `com.android.health.connect.backuprestore` | Health Connect Backup | Background Health Connect cloud backup helper |
-| `com.android.bookmarkprovider` | Legacy Bookmark Provider | Obsolete AOSP browser bookmark provider |
-| `com.android.providers.blockednumber` | Blocked Number Provider | Phone call-blocking DB (no cellular radio on Quest) |
-| `com.android.nearby.halfsheet` | Nearby Share Halfsheet | Google Nearby device pairing popup stub |
+| Package ID | Component | Affects (UAD Subsystem) | Measured Impact & Disk Footprint |
+| :--- | :--- | :--- | :--- |
+| `com.facebook.horizon` | Meta Horizon Worlds | Horizon Worlds App & Feed | Removes Horizon Worlds & feed clutter (`620.7 MiB` on `/data/app`) |
+| `com.oculus.facebook` | Facebook VR App | Facebook Social VR App | Preinstalled Facebook wrapper (`150.7 MiB` removable `/data/app`) |
+| `com.oculus.igvr` | Instagram VR App | Instagram Social VR App | Preinstalled Instagram wrapper (`271.8 MiB` removable `/data/app`) |
+| `com.oculus.thvr` | Threads VR App | Threads Social VR App | Preinstalled Threads wrapper (`19.1 MiB` removable `/data/app`) |
+| `com.facebook.arvr.quillplayer` | Theater Elsewhere / Quill | Theater Elsewhere Demo | Preinstalled showcase player (`25.6 MiB` removable `/data/app`) |
+| `com.oculus.samples.firsthand` | First Hand Demo | First Hand Tracking Demo | Preinstalled hand tracking demo (`568.8 MiB` removable `/data/app`) |
+| `com.meta.handseducationmodule` | Hands Education Module | Hand Gesture Tutorial Overlay | Interactive gesture onboarding (`174.6 MiB` removable `/data/app`) |
+| `com.meta.curio.ruler` | Curio MR Ruler | MR Ruler Novelty Utility | Preinstalled MR novelty app (`70.0 MiB` removable `/data/app`) |
+| `com.meta.curio.toybox` | Curio MR Toybox | MR Toybox Novelty Demo | Preinstalled MR novelty app (`310.8 MiB` removable `/data/app`) |
+| `com.oculus.assistant` | Meta Voice Assistant | Voice Trigger & Mic Listener | Background voice trigger listener |
+| `com.oculus.guidebook` | Quest Guidebook | Guidebook Tips Background Service | Resident onboarding tips service (`~112 MB` RSS / `39.0 MiB` `/data/app`) |
+| `com.oculus.helpcenter` | Meta Help Center | Meta Help Viewer Service | Support article viewer (`~118 MB` RSS / `14.0 MiB` `/data/app`) |
+| `com.oculus.vrprivacycheckup` | VR Privacy Checkup | Periodic Privacy Nags | Periodic privacy wizard nag (`16.0 MiB` removable `/data/app`) |
+| `com.oculus.panelapp.calendar` | Oculus Calendar Panel | Legacy Home Calendar Widget | Legacy Home calendar widget (`11.5 MiB` `/data/app`) |
+| `com.meta.environment.prod.nuxd` | Meta NUX Onboarding Daemon | New-User Setup Daemon | New-user onboarding daemon unneeded after setup (`6.9 MiB` ROM) |
+| `com.meta.surfacetypingnux` | Surface Typing Tutorial | Direct-Touch Typing Tutorial | Onboarding direct-touch typing tutorial (`1.2 MiB` ROM) |
+| `com.meta.HyperscapeHmdCapture` | Hyperscape Room Capture | Cloud Room Photogrammetry | Cloud capture app (`184.9 MiB` `/data/app`; Guardian intact) |
+| `com.oculus.panelapp.kiosk` | Retail Kiosk Mode Panel | Retail Store Demo Kiosk | Commercial store demo kiosk panel |
+| `com.microsoft.rdc.androidx` | Microsoft Windows App | Microsoft Remote Desktop Client | Preinstalled Remote Desktop client stub (`90.5 MiB` `/data/app`) |
+| `com.android.managedprovisioning` | Work Profile Provisioning | Corporate Work Profile MDM | Corporate BYOD MDM provisioning wizard (`~95 MB` PSS / `5.6 MiB` ROM) |
+| `com.android.providers.tv` | Android TV Provider | Unused Android TV Tuner DB | Unused TV tuner/channel database (`~99 MB` PSS) |
+| `com.android.providers.calendar` | Calendar Storage Provider | Android Calendar Sync DB | Background calendar DB waking in RAM (`~99 MB` PSS) |
+| `com.android.healthconnect.controller` | Health Connect Controller | Phone Health Connect UI | Phone fitness/health data controller UI (`6.1 MiB` APEX) |
+| `com.android.health.connect.backuprestore` | Health Connect Backup | Phone Health Connect Backup | Background Health Connect cloud backup helper |
+| `com.android.bookmarkprovider` | Legacy Bookmark Provider | Legacy AOSP Bookmark DB | Obsolete AOSP browser bookmark provider |
+| `com.android.providers.blockednumber` | Blocked Number Provider | Phone Call-Blocking DB | Phone call-blocking DB (no cellular radio on Quest) |
+| `com.android.nearby.halfsheet` | Nearby Share Halfsheet | Nearby Share Pop-up Stub | Google Nearby device pairing popup stub (`3.2 MiB` APEX) |
 
 </details>
 

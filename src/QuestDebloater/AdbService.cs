@@ -281,6 +281,7 @@ public sealed class AdbService
                     Package = pkg,
                     Name = pkg,
                     Category = prot ? "Protected" : "Discovered Meta/OS",
+                    Affects = prot ? "Core VR Shell / OS Runtime (Critical)" : "Discovered Horizon OS Component",
                     Tier = prot ? "PROTECTED" : "CAUTION",
                     Description = prot
                         ? "Horizon OS core component detected on device (protected)."
