@@ -10,7 +10,7 @@ namespace QuestDebloater;
 public sealed class AdbService
 {
     private static readonly Regex ProtectedRegex = new(
-        @"^(android|android\.ext\..*|com\.qualcomm\..*|horizonos\..*|horizon\.platform\..*|com\.meta\.systemui|com\.oculus\.(vrshell|systemux|systemdriver|systemactivities|systemutilities|systemresource|guardian.*|os\..*|vrbtcontrol|micservice|userserver2|ocms|configuration|panelapp\.(settings|library|devicepairing)|firsttimenux|MiramarSetupRetail|maintenanceboot|externalstorage|extrapermissions|companion\.server|identitymanagement\.service|deviceauthserver|updater|q4bservice|.*\.rro))$",
+        @"^(android|android\.ext\..*|com\.qualcomm\..*|horizonos\..*|horizon\.platform\..*|com\.meta\.systemui|com\.facebook\.spatial_persistence_service|com\.oculus\.(vrshell|systemux|systemdriver|systemactivities|systemutilities|systemresource|guardian.*|os\..*|vrbtcontrol|micservice|userserver2|ocms|configuration|panelapp\.(settings|library|devicepairing)|firsttimenux|MiramarSetupRetail|maintenanceboot|externalstorage|extrapermissions|companion\.server|identitymanagement\.service|deviceauthserver|updater|q4bservice|horizon|linefrequencyservice|bodyapiservice|connectivity\.bluetooth|vralertservice|integrity|cvp|externaldisplayservice|.*\.rro))$",
         RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
     private static readonly HashSet<string> SafeAndroidExemptions = new(StringComparer.OrdinalIgnoreCase)
